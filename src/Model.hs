@@ -5,11 +5,11 @@ import SDL
 
 import GHC.Int (Int32)
 
-import Keyboard (Keyboard)
-import qualified Keyboard as K
+import Events.Keyboard (Keyboard)
+import qualified Events.Keyboard as K
 
-import Mouse (MouseState)
-import qualified Mouse as MOS
+import Events.Mouse (MouseState)
+import qualified Events.Mouse as MOS
 
 import Debug.Trace (trace)
 

@@ -1,4 +1,4 @@
-module Mouse where
+module Events.Mouse where
 
 import Debug.Trace (trace)
 import SDL

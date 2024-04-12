@@ -24,11 +24,11 @@ import qualified Sprite as S
 import SpriteMap (SpriteMap, SpriteId (..))
 import qualified SpriteMap as SM
 
-import Keyboard (Keyboard)
-import qualified Keyboard as K
+import Events.Keyboard (Keyboard)
+import qualified Events.Keyboard as K
 
-import Mouse (MouseState)
-import qualified Mouse as MOS
+import Events.Mouse (MouseState)
+import qualified Events.Mouse as MOS
 
 import qualified Debug.Trace as T
 

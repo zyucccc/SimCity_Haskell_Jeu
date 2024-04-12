@@ -1,5 +1,5 @@
 
-module Keyboard where
+module Events.Keyboard where
 
 import SDL
 
