@@ -1,0 +1,26 @@
+/Users/zyu/.stack/programs/i386-osx/ghc-9.6.4/lib/ghc-9.6.4/lib/x86_64-osx-ghc-9.6.4/rts-1.0.2/include/ghcversion.h:
+  hash: cbc0ab805e5b827180e3116cecd3f6665988df7f45a6b64f0e09ea8c25c438ff
+/Users/zyu/Desktop/Projet/SimCity_Haskell_Jeu/.stack-work/dist/i386-osx/ghc-9.6.4/build/autogen/Paths_minijeu.hs:
+  hash: 13310cf74ee51056d06597d8e1cc02f38d2a3b32c20cf206f8eb5df58bdb23d9
+/Users/zyu/Desktop/Projet/SimCity_Haskell_Jeu/.stack-work/dist/i386-osx/ghc-9.6.4/build/autogen/cabal_macros.h:
+  hash: 7b3cdbec295fc766c9f607f11ef358a38f2a9533221c221a60a6512139c86884
+/Users/zyu/Desktop/Projet/SimCity_Haskell_Jeu/ChangeLog.md:
+  hash: e59d79eec98a648ef6fa74563560ca4fd1d3d93d93e6588d66daa8a3c624be96
+/Users/zyu/Desktop/Projet/SimCity_Haskell_Jeu/README.md:
+  hash: ba0b3c5b33522c3ba20d5ca05f658f06ba4fdcf1b15d523f88e7f795903ace0d
+/Users/zyu/Desktop/Projet/SimCity_Haskell_Jeu/minijeu.cabal:
+  hash: f436b1945dcbadc1cf55843da904db6baabc98fa4e3c2cec9a67f69b4b9f9e47
+/Users/zyu/Desktop/Projet/SimCity_Haskell_Jeu/package.yaml:
+  hash: 0c4ea33a912d038bec356172d4d7597d39cac4ca3462eab0406119cb230cf9d4
+/Users/zyu/Desktop/Projet/SimCity_Haskell_Jeu/src/Keyboard.hs:
+  hash: 91eb37143f49a795fb27a3e3f70461b5cd7767b26cbb2a38d2f9bfedd9bb9bad
+/Users/zyu/Desktop/Projet/SimCity_Haskell_Jeu/src/Model.hs:
+  hash: 479365b94b04b1b90a4ddbf0301162176c33d93398bfef3c1974e0ddd51b978f
+/Users/zyu/Desktop/Projet/SimCity_Haskell_Jeu/src/Mouse.hs:
+  hash: 74470d1a49bbcea57463d9153e9d369d94f69a730d070cd20a9c2ec12cf96ef8
+/Users/zyu/Desktop/Projet/SimCity_Haskell_Jeu/src/Sprite.hs:
+  hash: 5cffcaf612a309d398d8cbcd094fa9e66926b7087e3fc3378d2999578e655b22
+/Users/zyu/Desktop/Projet/SimCity_Haskell_Jeu/src/SpriteMap.hs:
+  hash: dc0d10962099028472ca234496ec7dfdc99fa64f6f3e7da1505b1685b9188206
+/Users/zyu/Desktop/Projet/SimCity_Haskell_Jeu/src/TextureMap.hs:
+  hash: a78ebf5f6d72a0acd3e7b5c948242c48911bbe4581b189d4791faf5d09c9c5ff
