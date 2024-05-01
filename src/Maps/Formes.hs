@@ -10,6 +10,7 @@ instance Ord Coord where
 data Forme = HSegment Coord CInt -- horizontal segment
            | VSegment Coord CInt -- vertical segment
            | Rectangle Coord CInt CInt -- rectangle segment
+           deriving (Eq)
 
 -- Hsegment : Coord : point de le plus à l’Ouest
 -- Vsegment : Coord : point de le plus au Nord

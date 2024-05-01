@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 616b8b762154d48c5f785b1a00f5ae95dcb7a45204522f7283756f139aa6706d
+-- hash: f5f1051ee1f5b6a774c6f4fdadef390551ec98c19806b50ebd5f360e3ace4e24
 
 name:           minijeu
 version:        0.1.0.0
@@ -27,17 +27,17 @@ source-repository head
 
 library
   exposed-modules:
-      Citoyens
+      Entitys.Entitys
+      Entitys.Ville
       Events.Keyboard
       Events.Mouse
       Maps.Formes
       Maps.Monde
+      Maps.Zones
       Model
       Sprite
       SpriteMap
       TextureMap
-      Ville
-      Zones
   other-modules:
       Paths_minijeu
   hs-source-dirs:
