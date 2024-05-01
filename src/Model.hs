@@ -11,20 +11,28 @@ import qualified Events.Keyboard as K
 import Events.Mouse (MouseState)
 import qualified Events.Mouse as MOS
 
+import Maps.Formes (Coord,Forme)
+
 import Debug.Trace (trace)
 
+--data GameState = GameState {
+--    monde :: Monde,
+--    cursorPos :: Coord, -- 管理游戏中的光标位置
+--    selectedForme :: Maybe Forme -- 当前选择的建筑类型，可选
+--    -- 其他可能的游戏状态如分数、经济状态等
+--}
 
 data GameState = GameState { persoX :: Int
                            , persoY :: Int
                            , speed :: Int
                            , mouseClick :: MouseState
-                           , displayText :: Maybe String}
--- }
+                           , displayText :: Maybe String
+                           }
   deriving (Show)
 
 
 initGameState :: GameState
-initGameState = GameState 200 300 4 Nothing Nothing
+initGameState = GameState 200 300 4 (False,Nothing) Nothing
 
 moveLeft :: GameState -> GameState
 moveLeft gs = Debug.Trace.trace "Keyboard: Move left" gs { persoX = persoX gs - speed gs }
@@ -57,18 +65,16 @@ gameStep gstate kbd mos deltaTime =
                in modif gstate
 
  
-
-
 handleMouseClick :: GameState -> GameState
-handleMouseClick gs = 
-  let mos = mouseClick gs
+handleMouseClick gs =
+  let (pressed,pos) = mouseClick gs
       px = fromIntegral $ persoX gs
       py = fromIntegral $ persoY gs
-  in case mos of
-      --  Just _ -> Debug.Trace.trace "Mouse click!" gs
-       Just (P (V2 x y)) -> 
-        if x > px  && x < px + 100 && y > py  && y < py + 100
-        then gs { displayText = Just "Touché!" }
-        else gs
-       Nothing -> gs
--- Debug.Trace.trace "Touché!"
+  in case pressed of
+        False -> gs
+        True -> case pos of
+                     Just (P (V2 x y)) ->
+                            if  x > px  && x < px + 100 && y > py  && y < py + 100
+                            then gs { displayText = Just "Touché!" }
+                            else gs
+                     Nothing -> gs

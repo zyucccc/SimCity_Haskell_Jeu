@@ -8,8 +8,8 @@ import Foreign.C.Types (CInt (..) )
 type Monde = Map.Map Coord (Maybe Forme)
 
 -- initMap
-initMap :: CInt -> CInt -> Monde
-initMap width height = Map.fromList [((C x y), Nothing) | x <- [0..width-1], y <- [0..height-1]]
+initMonde :: CInt -> CInt -> Monde
+initMonde width height = Map.fromList [((C x y), Nothing) | x <- [0..width-1], y <- [0..height-1]]
 
 -- placer une forme sur la map
 placeForme :: Forme -> Monde -> Monde
