@@ -1,6 +1,6 @@
 module Zones where
 
-import  Formes (Forme,Coord)
+import  Maps.Formes (Forme,Coord)
 
 data Batiment
   = Cabane Forme Coord Int [CitId]

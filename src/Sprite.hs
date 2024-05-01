@@ -2,6 +2,7 @@ module Sprite where
 
 import Control.Monad.IO.Class (MonadIO)
 
+-- type int correspondant à un entier en C
 import Foreign.C.Types (CInt)
 
 import Data.Sequence (Seq (..))
@@ -17,7 +18,8 @@ import qualified TextureMap as TM
 
 import qualified Debug.Trace as T
 
-
+--data Rectangle a = Rectangle (Point V2 a) (V2 a)
+--V2 x y
 type Area = Rectangle CInt
 
 data Image =
@@ -71,6 +73,7 @@ moveTo :: Sprite -> CInt -> CInt -> Sprite
 moveTo sp@(Sprite { destArea = dest }) x y = sp { destArea = moveArea dest x y }
 
 -- | mise à l'échelle d'un lutin
+-- change la taille Area du lutin
 scale :: Sprite -> CInt -> CInt -> Sprite
 scale sp@(Sprite { destArea = dest}) w h = sp { destArea = resizeArea dest w h }
 

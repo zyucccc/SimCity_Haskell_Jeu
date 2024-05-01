@@ -1,6 +1,6 @@
 module Citoyens where
 
-import Formes (Coord)
+import Maps.Formes (Coord)
 import Zones (BatId)
 
 newtype Occupation = O String 

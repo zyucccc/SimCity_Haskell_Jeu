@@ -32,15 +32,22 @@ import qualified Events.Mouse as MOS
 
 import qualified Debug.Trace as T
 
--- import qualified SDL.TTF as Font
-
 import Model (GameState)
 import qualified Model as M
+
+-- constant global
+--640
+window_largeur :: CInt
+window_largeur = 960
+
+--480
+window_hauteur :: CInt
+window_hauteur = 720
 
 loadBackground :: Renderer-> FilePath -> TextureMap -> SpriteMap -> IO (TextureMap, SpriteMap)
 loadBackground rdr path tmap smap = do
   tmap' <- TM.loadTexture rdr path (TextureId "background") tmap
-  let sprite = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId "background") (S.mkArea 0 0 640 480)
+  let sprite = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId "background") (S.mkArea 0 0 window_largeur window_hauteur)
   let smap' = SM.addSprite (SpriteId "background") sprite smap
   return (tmap', smap')
 
@@ -53,8 +60,9 @@ loadPerso rdr path tmap smap = do
 
 main :: IO ()
 main = do
+  -- initialisation de SDL
   initializeAll
-  window <- createWindow "Minijeu" $ defaultWindow { windowInitialSize = V2 640 480 }
+  window <- createWindow "Minijeu" $ defaultWindow { windowInitialSize = V2 window_largeur window_hauteur }
   renderer <- createRenderer window (-1) defaultRenderer
   -- chargement de l'image du fond
   (tmap, smap) <- loadBackground renderer "assets/background.bmp" TM.createTextureMap SM.createSpriteMap

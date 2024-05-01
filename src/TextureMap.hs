@@ -12,6 +12,7 @@ import qualified SDL.Video.Renderer as R
 newtype TextureId = TextureId String
   deriving (Eq, Ord)
 
+-- TextureID : Uri pour texture
 instance Show TextureId where
   show (TextureId tid) = show tid
 
@@ -24,15 +25,20 @@ createTextureMap = M.empty
 -- | Ajout d'une texture
 addTexture :: TextureId -> Texture -> TextureMap -> TextureMap
 addTexture tid txt tmap =
+-- inserWithKey : si la clé existe déjà, on appelle la fonction pour traiter le conflit
   M.insertWithKey (\_ _ _ -> error $ "addTexture - Texture '" <> (show tid) <> "' already in texture map.")
   tid txt tmap
 
 -- | Chargement d'une texture à partir d'un fichier
 loadTexture  :: Renderer -> FilePath -> TextureId -> TextureMap -> IO TextureMap
 loadTexture rdr path tid tmap = do
+  --load img from path to surface
   srf <- R.loadBMP path
+  --create texture from surface
   txt <- createTextureFromSurface rdr srf
+  --free surface
   R.freeSurface srf
+  --add texture to texture map
   pure $ addTexture tid txt tmap 
 
 -- | Récupération d'une texture à partir de sa clé
