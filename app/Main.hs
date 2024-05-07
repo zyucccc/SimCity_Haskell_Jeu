@@ -1,7 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 import Debug.Trace (trace)
-import Control.Monad (unless)
+import Control.Monad (forM_,unless)
 import Control.Concurrent (threadDelay)
 
 import Data.Set (Set)
@@ -30,19 +30,18 @@ import qualified Events.Keyboard as K
 import Events.Mouse (MouseState)
 import qualified Events.Mouse as MOS
 
+import Config.Config
+import Maps.Monde
+import Maps.Zones
+import Maps.Formes
+import qualified Data.Map as Map
+
+
 import qualified Debug.Trace as T
 
 import Model (GameState)
 import qualified Model as M
 
--- constant global
---640
-window_largeur :: CInt
-window_largeur = 960
-
---480
-window_hauteur :: CInt
-window_hauteur = 720
 
 loadBackground :: Renderer-> FilePath -> TextureMap -> SpriteMap -> IO (TextureMap, SpriteMap)
 loadBackground rdr path tmap smap = do
@@ -58,6 +57,33 @@ loadPerso rdr path tmap smap = do
   let smap' = SM.addSprite (SpriteId "perso") sprite smap
   return (tmap', smap')
 
+loadMonde :: Renderer -> FilePath -> FilePath -> FilePath -> TextureMap -> SpriteMap -> IO (TextureMap, SpriteMap)
+loadMonde rdr pathSoil pathGrass pathWater tmap smap = do
+  tmapSoil <- TM.loadTexture rdr pathSoil (TextureId "soil") tmap
+  tmapGrass <- TM.loadTexture rdr pathGrass (TextureId "grass") tmapSoil
+  tmapWater <- TM.loadTexture rdr pathWater (TextureId "water") tmapGrass
+  -- Create sprites for each terrain type
+  let spriteSoil = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId "soil") (S.mkArea 0 0 caseSize caseSize)
+  let spriteGrass = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId "grass") (S.mkArea 0 0 caseSize caseSize)
+  let spriteWater = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId "water") (S.mkArea 0 0 caseSize caseSize)
+  -- Update SpriteMap with new sprites
+  let smapUpdated = SM.addSprite (SpriteId "soil") spriteSoil $
+                    SM.addSprite (SpriteId "grass") spriteGrass $
+                    SM.addSprite (SpriteId "water") spriteWater smap
+  return (tmapWater, smapUpdated)
+
+displayMonde :: Renderer -> TextureMap -> SpriteMap -> Monde -> IO ()
+displayMonde renderer tmap smap monde = do
+    forM_ (Map.toList monde) $ \((C x y), maybeZone) -> do
+        let spriteId = case maybeZone of
+                Just (Terre _) -> SpriteId "soil"
+                Just (Eau _)   -> SpriteId "water"
+                Just (Grass _) -> SpriteId "grass"
+        case SM.fetchSprite spriteId smap of
+             sprite -> S.displaySprite renderer tmap (S.moveTo sprite (fromIntegral (x * caseSize)) (fromIntegral (y * caseSize)))
+             _ -> return ()  -- 如果没有找到精灵，不做任何操作
+
+
 main :: IO ()
 main = do
   -- initialisation de SDL
@@ -66,17 +92,22 @@ main = do
   renderer <- createRenderer window (-1) defaultRenderer
   -- chargement de l'image du fond
   (tmap, smap) <- loadBackground renderer "assets/background.bmp" TM.createTextureMap SM.createSpriteMap
+--  (tmap, smap) <- loadBackground renderer "assets/grass.bmp" TM.createTextureMap SM.createSpriteMap
   -- chargement du personnage
   (tmap', smap') <- loadPerso renderer "assets/perso.bmp" tmap smap
+  -- chargement du monde
+  (tmap'', smap'') <- loadMonde renderer "assets/soil.bmp" "assets/grass.bmp" "assets/water.bmp" tmap' smap'
+  -- initialisation du monde
+  monde <- initMonde window_largeur window_hauteur
   -- initialisation de l'état du jeu
-  let gameState = M.initGameState
+  let gameState = M.initGameState monde
   -- initialisation de l'état du clavier
   let kbd = K.createKeyboard
 
   let mos = MOS.createMouseState
   -- let font = Font.load "assets/DejaVuSans-Bold.ttf" 24
   -- lancement de la gameLoop
-  gameLoop 60 renderer tmap' smap' kbd mos gameState
+  gameLoop 60 renderer tmap'' smap'' kbd mos gameState
 
 gameLoop :: (RealFrac a, Show a) => a -> Renderer -> TextureMap -> SpriteMap -> Keyboard -> MouseState -> GameState -> IO ()
 gameLoop frameRate renderer tmap smap kbd mos gameState = do
@@ -91,6 +122,8 @@ gameLoop frameRate renderer tmap smap kbd mos gameState = do
   clear renderer
   --- display background
   S.displaySprite renderer tmap (SM.fetchSprite (SpriteId "background") smap)
+  --- display monde
+  displayMonde renderer tmap smap (M.monde gameState)
   --- display perso 
   S.displaySprite renderer tmap (S.moveTo (SM.fetchSprite (SpriteId "perso") smap)
                                  (fromIntegral (M.persoX gameState))
@@ -106,7 +139,7 @@ gameLoop frameRate renderer tmap smap kbd mos gameState = do
   -- putStrLn $ "Delta time: " <> (show (deltaTime * 1000)) <> " (ms)"
   -- putStrLn $ "Frame rate: " <> (show (1 / deltaTime)) <> " (frame/s)"
   --- update du game state
-  let gameState' = M.gameStep gameState{ M.mouseClick = mos' } kbd' mos' deltaTime
+  let gameState' = M.gameStep gameState{ M.mouse_state = mos' } kbd' mos' deltaTime
   -- let gameState'' = gameState' { M.mouseClick = Nothing }
 
   case M.displayText gameState' of

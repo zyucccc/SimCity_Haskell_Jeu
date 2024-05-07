@@ -12,8 +12,10 @@ import Events.Mouse (MouseState)
 import qualified Events.Mouse as MOS
 
 import Maps.Formes (Coord,Forme)
+import Maps.Monde (Monde,initMonde)
 
 import Debug.Trace (trace)
+import Config.Config(window_largeur,window_hauteur)
 
 --data GameState = GameState {
 --    monde :: Monde,
@@ -25,14 +27,15 @@ import Debug.Trace (trace)
 data GameState = GameState { persoX :: Int
                            , persoY :: Int
                            , speed :: Int
-                           , mouseClick :: MouseState
+                           , mouse_state :: MouseState
                            , displayText :: Maybe String
+                           , monde :: Monde
                            }
-  deriving (Show)
+                           deriving (Show)
 
 
-initGameState :: GameState
-initGameState = GameState 200 300 4 (False,Nothing) Nothing
+initGameState :: Monde -> GameState
+initGameState monde = GameState 200 300 4 (False,Nothing) Nothing monde
 
 moveLeft :: GameState -> GameState
 moveLeft gs = Debug.Trace.trace "Keyboard: Move left" gs { persoX = persoX gs - speed gs }
@@ -67,7 +70,7 @@ gameStep gstate kbd mos deltaTime =
  
 handleMouseClick :: GameState -> GameState
 handleMouseClick gs =
-  let (pressed,pos) = mouseClick gs
+  let (pressed,pos) = mouse_state gs
       px = fromIntegral $ persoX gs
       py = fromIntegral $ persoY gs
   in case pressed of

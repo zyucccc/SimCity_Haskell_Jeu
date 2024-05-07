@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: f5f1051ee1f5b6a774c6f4fdadef390551ec98c19806b50ebd5f360e3ace4e24
+-- hash: 8e675be42bdb6694808dea5329a8bef988bab07853b215b8b2328d7ff0d69937
 
 name:           minijeu
 version:        0.1.0.0
@@ -27,6 +27,7 @@ source-repository head
 
 library
   exposed-modules:
+      Config.Config
       Entitys.Entitys
       Entitys.Ville
       Events.Keyboard

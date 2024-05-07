@@ -11,10 +11,15 @@ data Forme = HSegment Coord CInt -- horizontal segment
            | VSegment Coord CInt -- vertical segment
            | Rectangle Coord CInt CInt -- rectangle segment
            deriving (Eq)
-
 -- Hsegment : Coord : point de le plus à l’Ouest
 -- Vsegment : Coord : point de le plus au Nord
 -- Rectangle : Coord : point de le plus au Nord-Ouest,largeur,hauteur
+
+instance Show Forme where
+    show (HSegment (C x y) l) = "Hsegment(" <> show x <> "," <> show y <> ", length " <> show l <> ")"
+    show (VSegment (C x y) l) = "Vsegment(" <> show x <> "," <> show y <> ", length " <> show l <> ")"
+    show (Rectangle (C x y) l h) = "Rectangle(" <> show x <> "," <> show y <> ", largeur: " <> show l <> ", hauteur: " <> show h <> ")"
+
 
 -- y:Nord -> y:Sud -> x:Ouest -> x:Est
 limites :: Forme -> (CInt, CInt, CInt, CInt)
