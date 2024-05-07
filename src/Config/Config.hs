@@ -12,7 +12,7 @@ window_largeur = 1920
 window_hauteur :: CInt
 window_hauteur = 1080
 
--- la taille d'une case : 5*5 pixels
+-- la taille d'une case : 30*30 pixels
 caseSize :: CInt
 caseSize = 30
 
@@ -35,14 +35,21 @@ largeur_Toolbox = 300
 hauteur_Toolbox :: CInt
 hauteur_Toolbox = 350
 
-position_CabaneBouton_x :: CInt
-position_CabaneBouton_x = 1650
+position_ZRBouton_x :: CInt
+position_ZRBouton_x = 1610
 
-position_CabaneBouton_y :: CInt
-position_CabaneBouton_y = 150
+position_ZRBouton_y :: CInt
+position_ZRBouton_y = 150
 
-largeur_CabaneBouton :: CInt
-largeur_CabaneBouton = 200
+largeur_ZRBouton :: CInt
+largeur_ZRBouton = 140
 
-hauteur_CabaneBouton :: CInt
-hauteur_CabaneBouton = 50
+hauteur_ZRBouton :: CInt
+hauteur_ZRBouton = 65
+
+--- Batiment
+largeur_ZR :: CInt
+largeur_ZR = 2*caseSize
+
+hauteur_ZR :: CInt
+hauteur_ZR = 2*caseSize

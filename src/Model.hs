@@ -11,19 +11,13 @@ import qualified Events.Keyboard as K
 import Events.Mouse (MouseState)
 import qualified Events.Mouse as MOS
 
-import Maps.Formes (Coord,Forme)
-import Maps.Monde (Monde,initMonde)
+import Maps.Formes
+import Maps.Monde
+import Maps.Zones
 import Entitys.Entitys
 
 import Debug.Trace (trace)
-import Config.Config(window_largeur,window_hauteur)
-
---data GameState = GameState {
---    monde :: Monde,
---    cursorPos :: Coord, -- 管理游戏中的光标位置
---    selectedForme :: Maybe Forme -- 当前选择的建筑类型，可选
---    -- 其他可能的游戏状态如分数、经济状态等
---}
+import Config.Config
 
 data GameState = GameState { persoX :: Int
                            , persoY :: Int
@@ -31,7 +25,7 @@ data GameState = GameState { persoX :: Int
                            , mouse_state :: MouseState
                            , displayText :: Maybe String
                            , monde :: Monde
-                           , selectedBatiment :: Maybe BatimentType
+                           , selectedZone :: Maybe ZoneType
                            }
                            deriving (Show)
 
@@ -69,9 +63,64 @@ gameStep gstate kbd mos deltaTime =
                then handleMouseClick else id)
                in modif gstate
 
- 
 handleMouseClick :: GameState -> GameState
-handleMouseClick gs =
+handleMouseClick gs = handleMouseClick_BatimentType $ handleMouseClick_BuildZone $ handleMouseClick_touche gs
+
+handleMouseClick_BuildZone :: GameState -> GameState
+handleMouseClick_BuildZone gs =
+  let (pressed,pos) = mouse_state gs
+      px = fromIntegral $ persoX gs
+      py = fromIntegral $ persoY gs
+      notre_monde = monde gs
+  in case pressed of
+        False -> gs
+        True -> case pos of
+                     Just (P (V2 x y)) ->
+                            let coord_pixel = C (fromIntegral x) (fromIntegral y)
+                                coord_case = coordToRowCol coord_pixel
+                                in case selectedZone gs of
+                                        Just ZRType -> case check_DejaBuild_Monde ZRType coord_pixel notre_monde of
+                                            True -> gs
+                                            False -> gs {displayText = Just "build ZRType", monde = placeZone (createZone_ZR coord_pixel) notre_monde }
+                                        _ -> gs
+                     Nothing -> gs
+
+--handleMouseClick_BuildZone :: GameState -> GameState
+--handleMouseClick_BuildZone gs =
+--  let (pressed,pos) = mouse_state gs
+--      px = fromIntegral $ persoX gs
+--      py = fromIntegral $ persoY gs
+--      notre_monde = monde gs
+--  in case pressed of
+--        False -> gs
+--        True -> case pos of
+--                     Just (P (V2 x y)) ->
+--                            let coord_pixel = C (fromIntegral x) (fromIntegral y)
+--                                coord_case = coordToRowCol coord_pixel
+--                                in case checkCoord_Monde coord_case notre_monde of
+--                                    True -> gs
+--                                    False -> case selectedZone gs of
+--                                        Just ZRType -> gs {displayText = Just "build ZRType", monde = placeZone (createZone_ZR coord_pixel) notre_monde }
+--                                        _ -> gs
+--                     Nothing -> gs
+
+handleMouseClick_BatimentType :: GameState -> GameState
+handleMouseClick_BatimentType gs =
+  let (pressed,pos) = mouse_state gs
+      px = fromIntegral $ persoX gs
+      py = fromIntegral $ persoY gs
+  in case pressed of
+        False -> gs
+        True -> case pos of
+                     Just (P (V2 x y)) ->
+                            if  x > fromIntegral position_ZRBouton_x  && x < fromIntegral (position_ZRBouton_x + largeur_ZRBouton) && y > fromIntegral position_ZRBouton_y  && y < fromIntegral (position_ZRBouton_y + hauteur_ZRBouton)
+                            then gs { displayText = Just "build ZRType" , selectedZone = Just ZRType }
+                            else gs
+                     Nothing -> gs
+
+
+handleMouseClick_touche :: GameState -> GameState
+handleMouseClick_touche gs =
   let (pressed,pos) = mouse_state gs
       px = fromIntegral $ persoX gs
       py = fromIntegral $ persoY gs

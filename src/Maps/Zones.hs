@@ -3,6 +3,7 @@ module Maps.Zones where
 import Foreign.C.Types (CInt (..) )
 
 import  Maps.Formes
+import Config.Config
 import  Entitys.Entitys (Batiment,BatId,CitId,Citoyen)
 
 data Zone
@@ -14,6 +15,19 @@ data Zone
   | ZI Forme [Batiment]
   | ZC Forme [Batiment]
   | Admin Forme Batiment
+
+data ZoneType = EauType | GrassType | TerreType | RouteType | ZRType | ZIType | ZCType | AdminType deriving (Eq, Ord)
+
+instance Show ZoneType where
+      show EauType = "Eau"
+      show GrassType = "Grass"
+      show TerreType = "Terre"
+      show RouteType = "Route"
+      show ZRType = "Zone Residentielle"
+      show ZIType = "Zone Industrielle"
+      show ZCType = "Zone Commerciale"
+      show AdminType = "Administration"
+
 
 instance Show Zone where
     show (Eau f) = "Eau " ++ show f
@@ -48,6 +62,9 @@ zoneForme (Admin f _) = f
 -- accept une zone et renvoie la liste des cases qu'elle occupe.
 zoneCases :: Zone -> [Coord]
 zoneCases zone = formeCases (zoneForme zone)
+
+createZone_ZR :: Coord -> Zone
+createZone_ZR (C x y) = ZR (Rectangle (C x y) largeur_ZR hauteur_ZR) []
 
 
 

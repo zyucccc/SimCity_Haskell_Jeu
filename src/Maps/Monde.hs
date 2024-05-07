@@ -11,8 +11,6 @@ import System.Random (randomRIO)
 type Monde = Map.Map Coord (Maybe Zone)
 
 -- initMap
---假设全是土地
--- 假设全是土地
 --initMonde :: CInt -> CInt -> Monde
 --initMonde pixelWidth pixelHeight = Map.fromList [ (C x y, Just (Terre (Rectangle (C x y) caseSize caseSize))) | x <- [0..cols-1], y <- [0..rows-1]]
 initMonde :: CInt -> CInt -> IO Monde
@@ -26,6 +24,34 @@ initMonde pixelWidth pixelHeight = do
                             _ -> Terre (Rectangle (C x y) caseSize caseSize)    -- 其余是土地
                     return (C x y, Just zone)
     return $ Map.fromList (concat cells)
+
+-- verifier si il y a deja une zone construit sur l'ensemble des cases
+check_DejaBuild_Monde :: ZoneType -> Coord -> Monde -> Bool
+check_DejaBuild_Monde zoneType (C x y) monde =
+  let (C coord_x coord_y) = coordToRowCol (C x y)
+      (largeur, hauteur) = case zoneType of
+                            ZRType -> (largeur_ZR `div` caseSize, hauteur_ZR `div` caseSize)
+                            _ -> (caseSize `div` caseSize, caseSize `div` caseSize)
+      coords = [C (coord_x + dx) (coord_y + dy) | dx <- [0..largeur], dy <- [0..hauteur]]
+  in any (\coord -> case Map.lookup coord monde of
+                      Just (Just (Eau _)) -> True
+                      Just (Just (ZR _ _)) -> True
+                      Just (Just (ZI _ _)) -> True
+                      Just (Just (ZC _ _)) -> True
+                      Just (Just (Admin _ _)) -> True
+                      _ -> False) coords
+
+--verifier si le coord correspond à une case de Eau ou d'autre Batiment
+checkCoord_Monde :: Coord -> Monde -> Bool
+checkCoord_Monde coord_pixel monde =
+  let coord_case = coordToRowCol coord_pixel
+  in case Map.lookup coord_case monde of
+    Just (Just (Eau _)) -> True
+    Just (Just (ZR _ _)) -> True
+    Just (Just (ZI _ _)) -> True
+    Just (Just (ZC _ _)) -> True
+    Just (Just (Admin _ _)) -> True
+    _ -> False
 
 -- placer une forme sur la map
 placeZone :: Zone -> Monde -> Monde
