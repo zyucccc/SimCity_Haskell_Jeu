@@ -45,11 +45,10 @@ zoneForme (ZI f _) = f
 zoneForme (ZC f _) = f
 zoneForme (Admin f _) = f
 
-createWaterZone :: CInt -> CInt -> Zone
-createWaterZone width height = Eau (Rectangle (C 0 0) width (height `div` 4))
+-- accept une zone et renvoie la liste des cases qu'elle occupe.
+zoneCases :: Zone -> [Coord]
+zoneCases zone = formeCases (zoneForme zone)
 
-createTerreZone :: CInt -> CInt -> Zone
-createTerreZone width height = Terre (Rectangle (C 0 (height `div` 4)) width (3 * height `div` 4))
 
 
 

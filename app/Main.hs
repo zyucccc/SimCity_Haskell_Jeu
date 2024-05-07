@@ -36,6 +36,7 @@ import Maps.Zones
 import Maps.Formes
 import qualified Data.Map as Map
 
+import qualified SDL.Video.Renderer as R
 
 import qualified Debug.Trace as T
 
@@ -72,6 +73,16 @@ loadMonde rdr pathSoil pathGrass pathWater tmap smap = do
                     SM.addSprite (SpriteId "water") spriteWater smap
   return (tmapWater, smapUpdated)
 
+loadToolbox :: Renderer-> FilePath -> FilePath -> TextureMap -> SpriteMap -> IO (TextureMap, SpriteMap)
+loadToolbox rdr pathTool pathCabane tmap smap = do
+  tmapTool <- TM.loadTexture rdr pathTool (TextureId "toolbox") tmap
+  tmapCabane <- TM.loadTexture rdr pathCabane (TextureId "cabaneIcon") tmapTool
+  let spriteToolbox = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId "toolbox") (S.mkArea 0 0 largeur_Toolbox hauteur_Toolbox)
+  let spriteCabane = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId "cabaneIcon") (S.mkArea 0 0 largeur_CabaneBouton hauteur_CabaneBouton)
+  let smap' = SM.addSprite (SpriteId "cabaneIcon") spriteCabane $
+              SM.addSprite (SpriteId "toolbox") spriteToolbox smap
+  return (tmapCabane, smap')
+
 displayMonde :: Renderer -> TextureMap -> SpriteMap -> Monde -> IO ()
 displayMonde renderer tmap smap monde = do
     forM_ (Map.toList monde) $ \((C x y), maybeZone) -> do
@@ -81,7 +92,14 @@ displayMonde renderer tmap smap monde = do
                 Just (Grass _) -> SpriteId "grass"
         case SM.fetchSprite spriteId smap of
              sprite -> S.displaySprite renderer tmap (S.moveTo sprite (fromIntegral (x * caseSize)) (fromIntegral (y * caseSize)))
-             _ -> return ()  -- 如果没有找到精灵，不做任何操作
+
+displayToolbox :: Renderer -> TextureMap -> SpriteMap -> IO ()
+displayToolbox renderer tmap smap = do
+    let toolboxArea = SDL.Rectangle (P (V2 (fromIntegral window_largeur - 200) 0)) (V2 200 300)
+    let cabaneTexture = SM.fetchSprite (SpriteId "cabaneIcon") smap
+    let toolboxTexture = SM.fetchSprite (SpriteId "toolbox") smap
+    S.displaySprite renderer tmap (S.moveTo toolboxTexture (fromIntegral position_Toolbox_x) (fromIntegral position_Toolbox_y))
+    S.displaySprite renderer tmap (S.moveTo cabaneTexture (fromIntegral position_CabaneBouton_x) (fromIntegral position_CabaneBouton_y))
 
 
 main :: IO ()
@@ -97,6 +115,8 @@ main = do
   (tmap', smap') <- loadPerso renderer "assets/perso.bmp" tmap smap
   -- chargement du monde
   (tmap'', smap'') <- loadMonde renderer "assets/soil.bmp" "assets/grass.bmp" "assets/water.bmp" tmap' smap'
+  -- chargement de la toolbox
+  (tmap''', smap''') <- loadToolbox renderer "assets/tool.bmp" "assets/cabane.bmp" tmap'' smap''
   -- initialisation du monde
   monde <- initMonde window_largeur window_hauteur
   -- initialisation de l'état du jeu
@@ -107,7 +127,7 @@ main = do
   let mos = MOS.createMouseState
   -- let font = Font.load "assets/DejaVuSans-Bold.ttf" 24
   -- lancement de la gameLoop
-  gameLoop 60 renderer tmap'' smap'' kbd mos gameState
+  gameLoop 60 renderer tmap''' smap''' kbd mos gameState
 
 gameLoop :: (RealFrac a, Show a) => a -> Renderer -> TextureMap -> SpriteMap -> Keyboard -> MouseState -> GameState -> IO ()
 gameLoop frameRate renderer tmap smap kbd mos gameState = do
@@ -124,6 +144,8 @@ gameLoop frameRate renderer tmap smap kbd mos gameState = do
   S.displaySprite renderer tmap (SM.fetchSprite (SpriteId "background") smap)
   --- display monde
   displayMonde renderer tmap smap (M.monde gameState)
+  --- display toolbox
+  displayToolbox renderer tmap smap
   --- display perso 
   S.displaySprite renderer tmap (S.moveTo (SM.fetchSprite (SpriteId "perso") smap)
                                  (fromIntegral (M.persoX gameState))

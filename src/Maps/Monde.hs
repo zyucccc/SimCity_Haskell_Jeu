@@ -27,10 +27,6 @@ initMonde pixelWidth pixelHeight = do
                     return (C x y, Just zone)
     return $ Map.fromList (concat cells)
 
---添加一个方法计算当前坐标属于哪行哪列
-coordToRowCol :: Coord -> (CInt, CInt)
-coordToRowCol (C x y) = (x `div` caseSize, y `div` caseSize)
-
 -- placer une forme sur la map
---placeForme :: Forme -> Monde -> Monde
---placeForme forme monde = foldr (\coord acc -> Map.insert coord (Just forme) acc) monde (tous_coords_forme forme)
+placeZone :: Zone -> Monde -> Monde
+placeZone zone monde = Map.union (Map.fromList $ zip (zoneCases zone) (repeat (Just zone))) monde

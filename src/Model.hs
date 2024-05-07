@@ -13,6 +13,7 @@ import qualified Events.Mouse as MOS
 
 import Maps.Formes (Coord,Forme)
 import Maps.Monde (Monde,initMonde)
+import Entitys.Entitys
 
 import Debug.Trace (trace)
 import Config.Config(window_largeur,window_hauteur)
@@ -30,12 +31,13 @@ data GameState = GameState { persoX :: Int
                            , mouse_state :: MouseState
                            , displayText :: Maybe String
                            , monde :: Monde
+                           , selectedBatiment :: Maybe BatimentType
                            }
                            deriving (Show)
 
 
 initGameState :: Monde -> GameState
-initGameState monde = GameState 200 300 4 (False,Nothing) Nothing monde
+initGameState monde = GameState 200 300 4 (False,Nothing) Nothing monde Nothing
 
 moveLeft :: GameState -> GameState
 moveLeft gs = Debug.Trace.trace "Keyboard: Move left" gs { persoX = persoX gs - speed gs }

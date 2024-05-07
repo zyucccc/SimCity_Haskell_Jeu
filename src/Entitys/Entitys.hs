@@ -13,6 +13,15 @@ data Batiment
 
 newtype BatId =  BatId Int deriving (Eq, Ord)
 
+data BatimentType = CabaneType | AtelierType | EpicerieType | CommissariatType deriving (Eq, Ord)
+
+instance Show BatimentType where
+      show CabaneType = "Cabane"
+      show AtelierType = "Atelier"
+      show EpicerieType = "Epicerie"
+      show CommissariatType = "Commissariat"
+
+
 ------------------------------------------
 -- Citoyens
 ------------------------------------------

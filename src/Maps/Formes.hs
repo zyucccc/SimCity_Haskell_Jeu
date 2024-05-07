@@ -1,6 +1,8 @@
 module Maps.Formes where
 
 import Foreign.C.Types (CInt (..) )
+import Data.List (nub)
+import Config.Config
 
 data Coord = C {cx :: CInt, cy :: CInt} deriving (Show , Eq)
 
@@ -81,7 +83,7 @@ bordure_forme (Rectangle (C x y) w h) = concat [
     map (C (x + w - 1)) [y + 1 .. y + h - 2]           -- bordure en droite
   ]
 
---tous les cases de la forme
+--tous les coords de la forme
 tous_coords_forme :: Forme -> [Coord]
 tous_coords_forme (HSegment (C x y) l) =
     [C x' y | x' <- [x .. x + l - 1]]
@@ -89,6 +91,18 @@ tous_coords_forme (VSegment (C x y) l) =
     [C x y' | y' <- [y .. y + l - 1]]
 tous_coords_forme (Rectangle (C x y) w h) =
     [C x' y' | x' <- [x .. x + w - 1], y' <- [y .. y + h - 1]]
+
+--calculer la coordonnee de la case(colonne,row) à partir de la coordonnee de l'écran(pixel)
+coordToRowCol :: Coord -> Coord
+coordToRowCol (C x y) = C (x `div` caseSize) (y `div` caseSize)
+
+--tous les cases de la forme
+formeCases :: Forme -> [Coord]
+formeCases forme =
+    let pixels = tous_coords_forme forme
+        gridCoords = map coordToRowCol pixels
+    in nub gridCoords -- supprimer les doublons
+
 
 
 
