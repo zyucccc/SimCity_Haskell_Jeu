@@ -53,6 +53,12 @@ position_ZCBouton_x = 1610
 position_ZCBouton_y :: CInt
 position_ZCBouton_y = 310
 
+position_ADBouton_x :: CInt
+position_ADBouton_x = 1755
+
+position_ADBouton_y :: CInt
+position_ADBouton_y = 150
+
 largeur_ZRBouton :: CInt
 largeur_ZRBouton = 140
 
@@ -70,6 +76,12 @@ largeur_ZCBouton = 140
 
 hauteur_ZCBouton :: CInt
 hauteur_ZCBouton = 65
+
+largeur_ADBouton :: CInt
+largeur_ADBouton = 140
+
+hauteur_ADBouton :: CInt
+hauteur_ADBouton = 65
 
 --- Batiment
 largeur_ZR :: CInt
@@ -89,3 +101,9 @@ largeur_ZC = caseSize
 
 hauteur_ZC :: CInt
 hauteur_ZC = caseSize
+
+largeur_Admin :: CInt
+largeur_Admin = caseSize
+
+hauteur_Admin :: CInt
+hauteur_Admin = caseSize

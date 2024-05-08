@@ -88,6 +88,9 @@ handleMouseClick_BuildZone gs =
                                         Just ZCType -> case check_DejaBuild_Monde ZCType coord_pixel notre_monde of
                                             True -> gs
                                             False -> gs {displayText = Just "build ZCType", monde = placeZone (createZone_ZC coord_case) notre_monde }
+                                        Just AdminType -> case check_DejaBuild_Monde AdminType coord_pixel notre_monde of
+                                            True -> gs
+                                            False -> gs {displayText = Just "build AdminType", monde = placeZone (createZone_Admin coord_case (Commissariat (Maps.Formes.Rectangle (C (fromIntegral x) (fromIntegral y)) (fromIntegral largeur_Admin) (fromIntegral hauteur_Admin)) coord_case) ) notre_monde }
                                         _ -> gs
                      Nothing -> gs
 
@@ -107,6 +110,8 @@ handleMouseClick_BatimentType gs =
                             then gs { displayText = Just "build ZIType" , selectedZone = Just ZIType }
                             else if  x > fromIntegral position_ZCBouton_x  && x < fromIntegral (position_ZCBouton_x + largeur_ZCBouton) && y > fromIntegral position_ZCBouton_y  && y < fromIntegral (position_ZCBouton_y + hauteur_ZCBouton)
                             then gs { displayText = Just "build ZCType" , selectedZone = Just ZCType }
+                            else if  x > fromIntegral position_ADBouton_x  && x < fromIntegral (position_ADBouton_x + largeur_ADBouton) && y > fromIntegral position_ADBouton_y  && y < fromIntegral (position_ADBouton_y + hauteur_ADBouton)
+                            then gs { displayText = Just "build AdminType" , selectedZone = Just AdminType }
                             else gs
                      Nothing -> gs
 

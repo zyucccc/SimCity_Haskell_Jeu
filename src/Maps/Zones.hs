@@ -79,5 +79,8 @@ createZone_ZI (C x y) = ZI (Rectangle (C x y) largeur_ZI hauteur_ZI) []
 createZone_ZC :: Coord -> Zone
 createZone_ZC (C x y) = ZC (Rectangle (C x y) largeur_ZC hauteur_ZC) []
 
+createZone_Admin :: Coord -> Batiment -> Zone
+createZone_Admin (C x y) bat = Admin (Rectangle (C x y) largeur_Admin hauteur_Admin) bat
+
 
 
