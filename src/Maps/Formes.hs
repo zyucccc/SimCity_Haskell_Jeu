@@ -83,26 +83,48 @@ bordure_forme (Rectangle (C x y) w h) = concat [
     map (C (x + w - 1)) [y + 1 .. y + h - 2]           -- bordure en droite
   ]
 
+--renvoie coord de la forme
+coord_forme :: Forme -> Coord
+coord_forme (HSegment c _) = c
+coord_forme (VSegment c _) = c
+coord_forme (Rectangle c _ _) = c
+
+--tous les coords de la forme
+--tous_coords_forme :: Forme -> [Coord]
+--tous_coords_forme (HSegment (C x'' y'') l) =
+--    let x = x'' * caseSize
+--        y = y'' * caseSize in
+--        [C x' y | x' <- [x .. x + l - 1]]
+--tous_coords_forme (VSegment (C x'' y'') l) =
+--    let x = x'' * caseSize
+--        y = y'' * caseSize in
+--        [C x y' | y' <- [y .. y + l - 1]]
+--tous_coords_forme (Rectangle (C x'' y'') w h) =
+--    let x = x'' * caseSize
+--        y = y'' * caseSize in
+--        [C x' y' | x' <- [x .. x + w - 1], y' <- [y .. y + h - 1]]
+
 --tous les coords de la forme
 tous_coords_forme :: Forme -> [Coord]
-tous_coords_forme (HSegment (C x y) l) =
-    [C x' y | x' <- [x .. x + l - 1]]
-tous_coords_forme (VSegment (C x y) l) =
-    [C x y' | y' <- [y .. y + l - 1]]
-tous_coords_forme (Rectangle (C x y) w h) =
-    [C x' y' | x' <- [x .. x + w - 1], y' <- [y .. y + h - 1]]
+tous_coords_forme (HSegment (C x y) l') = let l = l' `div` caseSize in [C x' y | x' <- [x .. x + l]]
+tous_coords_forme (VSegment (C x y) l') = let l = l' `div` caseSize in [C x y' | y' <- [y .. y + l]]
+tous_coords_forme (Rectangle (C x y) w' h') = let w = w' `div` caseSize
+                                                  h = h' `div` caseSize
+                                            in  [C x' y' | x' <- [x .. x + w], y' <- [y .. y + h]]
 
 --calculer la coordonnee de la case(colonne,row) à partir de la coordonnee de l'écran(pixel)
 coordToRowCol :: Coord -> Coord
 coordToRowCol (C x y) = C (x `div` caseSize) (y `div` caseSize)
 
 --tous les cases de la forme
+--formeCases :: Forme -> [Coord]
+--formeCases forme =
+--    let pixels = tous_coords_forme forme
+--        gridCoords = map coordToRowCol pixels
+--    in nub gridCoords -- supprimer les doublons
+--tous les cases de la forme
 formeCases :: Forme -> [Coord]
-formeCases forme =
-    let pixels = tous_coords_forme forme
-        gridCoords = map coordToRowCol pixels
-    in nub gridCoords -- supprimer les doublons
-
+formeCases forme = nub (tous_coords_forme forme) -- supprimer les doublons
 
 
 

@@ -81,7 +81,7 @@ handleMouseClick_BuildZone gs =
                                 in case selectedZone gs of
                                         Just ZRType -> case check_DejaBuild_Monde ZRType coord_pixel notre_monde of
                                             True -> gs
-                                            False -> gs {displayText = Just "build ZRType", monde = placeZone (createZone_ZR coord_pixel) notre_monde }
+                                            False -> gs {displayText = Just "build ZRType", monde = placeZone (createZone_ZR coord_case) notre_monde }
                                         _ -> gs
                      Nothing -> gs
 

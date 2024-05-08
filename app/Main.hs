@@ -86,25 +86,27 @@ loadToolbox rdr pathTool pathCabane tmap smap = do
 loadBuilding :: Renderer -> FilePath -> TextureMap -> SpriteMap -> IO (TextureMap, SpriteMap)
 loadBuilding rdr pathCabane tmap smap = do
   tmapZR <- TM.loadTexture rdr pathCabane (TextureId "ZR_building") tmap
-  let sprite = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId "ZR_building") (S.mkArea 0 0 largeur_ZR hauteur_ZR)
+  let sprite = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId "ZR_building") (S.mkArea 0 0 (2*largeur_ZR) (2*hauteur_ZR))
   let smap' = SM.addSprite (SpriteId "ZR_building") sprite smap
   return (tmapZR, smap')
 
 displayMonde :: Renderer -> TextureMap -> SpriteMap -> Monde -> IO ()
 displayMonde renderer tmap smap monde = do
     forM_ (Map.toList monde) $ \((C x y), maybeZone) -> do
+        zone <- case maybeZone of
+            Just z -> return z
+            Nothing -> error "displayMonde - No such zone"
+        let (C zone_x zone_y) = zoneCoord zone
         let spriteId = case maybeZone of
                 Just (Terre _) ->  SpriteId "soil"
                 Just (Eau _)   ->  SpriteId "water"
                 Just (Grass _) ->  SpriteId "grass"
                 Just (ZR _ _)  ->  SpriteId "ZR_building"
---        case spriteId of
---                     Just id -> do
---                         let sprite = SM.fetchSprite id smap
---                         S.displaySprite renderer tmap (S.moveTo sprite (fromIntegral (x * caseSize)) (fromIntegral (y * caseSize)))
---                     Nothing -> return ()
         case SM.fetchSprite spriteId smap of
-             sprite -> S.displaySprite renderer tmap (S.moveTo sprite (fromIntegral (x * caseSize)) (fromIntegral (y * caseSize)))
+--             sprite -> S.displaySprite renderer tmap (S.moveTo sprite (fromIntegral (x * caseSize)) (fromIntegral (y * caseSize)))
+              sprite -> S.displaySprite renderer tmap (S.moveTo sprite (fromIntegral (zone_x * caseSize)) (fromIntegral (zone_y * caseSize)))
+--                sprite -> S.displaySprite renderer tmap (S.moveTo sprite (fromIntegral zone_x) (fromIntegral zone_y))
+
 
 displayToolbox :: Renderer -> TextureMap -> SpriteMap -> IO ()
 displayToolbox renderer tmap smap = do
@@ -131,7 +133,7 @@ main = do
   -- chargement de la toolbox
   (tmap''', smap''') <- loadToolbox renderer "assets/tool.bmp" "assets/zone_residence.bmp" tmap'' smap''
   -- chargement du batiment
-  (tmap4, smap4) <- loadBuilding renderer "assets/cabane_building.bmp" tmap''' smap'''
+  (tmap4, smap4) <- loadBuilding renderer "assets/ZR_building.bmp" tmap''' smap'''
   -- initialisation du monde
   monde <- initMonde window_largeur window_hauteur
   -- initialisation de l'état du jeu

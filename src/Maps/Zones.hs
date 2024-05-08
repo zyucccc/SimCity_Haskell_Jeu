@@ -53,15 +53,22 @@ newtype ZoneId =  ZoneId Int deriving (Eq, Ord)
 -- accept une zone et renvoie sa forme.
 zoneForme :: Zone -> Forme
 zoneForme (Eau f) = f
+zoneForme (Grass f) = f
+zoneForme (Terre f) = f
 zoneForme (Route f) = f
 zoneForme (ZR f _) = f
 zoneForme (ZI f _) = f
 zoneForme (ZC f _) = f
 zoneForme (Admin f _) = f
 
+
 -- accept une zone et renvoie la liste des cases qu'elle occupe.
 zoneCases :: Zone -> [Coord]
 zoneCases zone = formeCases (zoneForme zone)
+
+--renvoie la coordonnee de la zone
+zoneCoord :: Zone -> Coord
+zoneCoord zone = coord_forme $ zoneForme zone
 
 createZone_ZR :: Coord -> Zone
 createZone_ZR (C x y) = ZR (Rectangle (C x y) largeur_ZR hauteur_ZR) []

@@ -49,7 +49,7 @@ hauteur_ZRBouton = 65
 
 --- Batiment
 largeur_ZR :: CInt
-largeur_ZR = 2*caseSize
+largeur_ZR = caseSize
 
 hauteur_ZR :: CInt
-hauteur_ZR = 2*caseSize
+hauteur_ZR = caseSize

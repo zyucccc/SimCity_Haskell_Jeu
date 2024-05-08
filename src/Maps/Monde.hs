@@ -18,6 +18,8 @@ initMonde pixelWidth pixelHeight = do
     cells <- forM [0..cols-1] $ \x ->
                 forM [0..rows-1] $ \y -> do
                     r <- randomRIO (0, 30::CInt)
+--                    let x' = x * caseSize
+--                        y' = y * caseSize
                     let zone = case r of
                             0 -> Eau (Rectangle (C x y) caseSize caseSize)     -- 1% 的几率是水
                             1 -> Grass (Rectangle (C x y) caseSize caseSize)    -- 1% 的几率是草地
@@ -56,3 +58,4 @@ checkCoord_Monde coord_pixel monde =
 -- placer une forme sur la map
 placeZone :: Zone -> Monde -> Monde
 placeZone zone monde = Map.union (Map.fromList $ zip (zoneCases zone) (repeat (Just zone))) monde
+--placeZone zone monde = Map.union (Map.fromList $ zip (repeat (zoneCoord zone)) (repeat (Just zone))) monde
