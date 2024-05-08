@@ -195,5 +195,6 @@ handleMouseClick_touche gs =
 handleClavierE :: GameState -> GameState
 handleClavierE gs = gs { displayText = Just ("Money actuel: "++show(economic gs)) }
 
+-- afficher la ville actuel
 handleClavierV :: GameState -> GameState
 handleClavierV gs = gs { displayText = Just ("Ville actuel: "++show(ville gs)) }
