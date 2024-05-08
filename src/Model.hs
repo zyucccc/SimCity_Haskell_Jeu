@@ -91,6 +91,12 @@ handleMouseClick_BuildZone gs =
                                         Just AdminType -> case check_DejaBuild_Monde AdminType coord_pixel notre_monde of
                                             True -> gs
                                             False -> gs {displayText = Just "build AdminType", monde = placeZone (createZone_Admin coord_case (Commissariat (Maps.Formes.Rectangle (C (fromIntegral x) (fromIntegral y)) (fromIntegral largeur_Admin) (fromIntegral hauteur_Admin)) coord_case) ) notre_monde }
+                                        Just RouteType_Vertical -> case check_DejaBuild_Monde RouteType_Vertical coord_pixel notre_monde of
+                                            True -> gs
+                                            False -> gs {displayText = Just "build RouteType_Vertical", monde = placeZone (createZone_Route coord_case Vertical) notre_monde }
+                                        Just RouteType_Horizontal -> case check_DejaBuild_Monde RouteType_Horizontal coord_pixel notre_monde of
+                                            True -> gs
+                                            False -> gs {displayText = Just "build RouteType_Horizontal", monde = placeZone (createZone_Route coord_case Horizontal) notre_monde }
                                         _ -> gs
                      Nothing -> gs
 
@@ -112,6 +118,10 @@ handleMouseClick_BatimentType gs =
                             then gs { displayText = Just "build ZCType" , selectedZone = Just ZCType }
                             else if  x > fromIntegral position_ADBouton_x  && x < fromIntegral (position_ADBouton_x + largeur_ADBouton) && y > fromIntegral position_ADBouton_y  && y < fromIntegral (position_ADBouton_y + hauteur_ADBouton)
                             then gs { displayText = Just "build AdminType" , selectedZone = Just AdminType }
+                            else if  x > fromIntegral position_routeBoutonVerticale_x  && x < fromIntegral (position_routeBoutonVerticale_x + largeur_routeBouton) && y > fromIntegral position_routeBoutonVerticale_y  && y < fromIntegral (position_routeBoutonVerticale_y + hauteur_routeBouton)
+                            then gs { displayText = Just "build Route Verticale" , selectedZone = Just RouteType_Vertical }
+                            else if x > fromIntegral position_routeBoutonHoriz_x  && x < fromIntegral (position_routeBoutonHoriz_x + largeur_routeBouton) && y > fromIntegral position_routeBoutonHoriz_y  && y < fromIntegral (position_routeBoutonHoriz_y + hauteur_routeBouton)
+                            then gs { displayText = Just "build Route Horizontale " , selectedZone = Just RouteType_Horizontal }
                             else gs
                      Nothing -> gs
 

@@ -6,23 +6,31 @@ import  Maps.Formes
 import Config.Config
 import  Entitys.Entitys (Batiment,BatId,CitId,Citoyen)
 
+data Direction_Route = Vertical | Horizontal deriving (Eq, Ord)
+
+instance Show Direction_Route where
+      show Vertical = "Vertical"
+      show Horizontal = "Horizontal"
+
+
 data Zone
   = Eau Forme
   | Grass Forme
   | Terre Forme
-  | Route Forme
+  | Route Forme Direction_Route
   | ZR Forme [Batiment]
   | ZI Forme [Batiment]
   | ZC Forme [Batiment]
   | Admin Forme Batiment
 
-data ZoneType = EauType | GrassType | TerreType | RouteType | ZRType | ZIType | ZCType | AdminType deriving (Eq, Ord)
+data ZoneType = EauType | GrassType | TerreType | RouteType_Vertical | RouteType_Horizontal | ZRType | ZIType | ZCType | AdminType deriving (Eq, Ord)
 
 instance Show ZoneType where
       show EauType = "Eau"
       show GrassType = "Grass"
       show TerreType = "Terre"
-      show RouteType = "Route"
+      show RouteType_Vertical = "Route Vertical"
+      show RouteType_Horizontal = "Route Horizontal"
       show ZRType = "Zone Residentielle"
       show ZIType = "Zone Industrielle"
       show ZCType = "Zone Commerciale"
@@ -33,7 +41,7 @@ instance Show Zone where
     show (Eau f) = "Eau " ++ show f
     show (Grass f) = "Grass " ++ show f
     show (Terre f) = "Terre " ++ show f
-    show (Route f) = "Route " ++ show f
+    show (Route f dir) = "Route " ++ show dir ++ show f
     show (ZR f _) = "Zone Residentielle " ++ show f
     show (ZI f _) = "Zone Industrielle " ++ show f
     show (ZC f _) = "Zone Commerciale " ++ show f
@@ -41,7 +49,7 @@ instance Show Zone where
 
 instance Eq Zone where
     (Eau f) == (Eau f') = f == f'
-    (Route f) == (Route f') = f == f'
+    (Route f dir) == (Route f' dir') = f == f' && dir == dir'
     (ZR f _) == (ZR f' _) = f == f'
     (ZI f _) == (ZI f' _) = f == f'
     (ZC f _) == (ZC f' _) = f == f'
@@ -55,7 +63,7 @@ zoneForme :: Zone -> Forme
 zoneForme (Eau f) = f
 zoneForme (Grass f) = f
 zoneForme (Terre f) = f
-zoneForme (Route f) = f
+zoneForme (Route f _) = f
 zoneForme (ZR f _) = f
 zoneForme (ZI f _) = f
 zoneForme (ZC f _) = f
@@ -81,6 +89,9 @@ createZone_ZC (C x y) = ZC (Rectangle (C x y) largeur_ZC hauteur_ZC) []
 
 createZone_Admin :: Coord -> Batiment -> Zone
 createZone_Admin (C x y) bat = Admin (Rectangle (C x y) largeur_Admin hauteur_Admin) bat
+
+createZone_Route :: Coord -> Direction_Route -> Zone
+createZone_Route (C x y) dir = Route (Rectangle (C x y) (largeur_route `div` 2) (hauteur_route `div` 2)) dir
 
 
 

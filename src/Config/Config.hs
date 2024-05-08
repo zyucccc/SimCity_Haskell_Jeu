@@ -59,6 +59,18 @@ position_ADBouton_x = 1755
 position_ADBouton_y :: CInt
 position_ADBouton_y = 150
 
+position_routeBoutonVerticale_x :: CInt
+position_routeBoutonVerticale_x = 1755
+
+position_routeBoutonVerticale_y :: CInt
+position_routeBoutonVerticale_y = 230
+
+position_routeBoutonHoriz_x :: CInt
+position_routeBoutonHoriz_x = 1755
+
+position_routeBoutonHoriz_y :: CInt
+position_routeBoutonHoriz_y = 310
+
 largeur_ZRBouton :: CInt
 largeur_ZRBouton = 140
 
@@ -82,6 +94,12 @@ largeur_ADBouton = 140
 
 hauteur_ADBouton :: CInt
 hauteur_ADBouton = 65
+
+largeur_routeBouton :: CInt
+largeur_routeBouton = 140
+
+hauteur_routeBouton :: CInt
+hauteur_routeBouton = 65
 
 --- Batiment
 largeur_ZR :: CInt
@@ -107,3 +125,9 @@ largeur_Admin = caseSize
 
 hauteur_Admin :: CInt
 hauteur_Admin = caseSize
+
+largeur_route :: CInt
+largeur_route = caseSize
+
+hauteur_route :: CInt
+hauteur_route = caseSize
