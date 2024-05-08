@@ -21,4 +21,3 @@ addZone_Ville zid z (Ville zones cit) = Ville (M.insert zid z zones) cit
 
 prop_ville_sansCollision :: Ville -> Bool
 prop_ville_sansCollision (Ville zones _) = all (\(z1,z2) -> not (collision (zoneForme z1) (zoneForme z2))) [(z1,z2) | z1 <- M.elems zones, z2 <- M.elems zones, z1 /= z2]
-
