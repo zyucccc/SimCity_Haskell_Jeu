@@ -56,7 +56,11 @@ instance Eq Zone where
     (Admin f _) == (Admin f' _) = f == f'
     _ == _ = False
 
-newtype ZoneId =  ZoneId Int deriving (Eq, Ord)
+newtype ZoneId =  ZoneId CInt deriving (Eq, Ord)
+
+instance Show ZoneId where
+  show (ZoneId id) = show id
+
 
 -- accept une zone et renvoie sa forme.
 zoneForme :: Zone -> Forme

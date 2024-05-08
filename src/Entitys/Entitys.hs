@@ -13,6 +13,10 @@ data Batiment
 
 newtype BatId =  BatId Int deriving (Eq, Ord)
 
+instance Show BatId where
+  show (BatId id) = show id
+
+
 data BatimentType = CabaneType | AtelierType | EpicerieType | CommissariatType deriving (Eq, Ord)
 
 instance Show BatimentType where
@@ -32,3 +36,6 @@ data Citoyen = Immigrant Coord (Int , Int , Int) Occupation
              | Emigrant Coord Occupation
 
 newtype CitId =  CitId String
+
+instance Show CitId where
+  show (CitId id) = show id
