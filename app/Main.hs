@@ -73,22 +73,34 @@ loadMonde rdr pathSoil pathGrass pathWater tmap smap = do
                     SM.addSprite (SpriteId "water") spriteWater smap
   return (tmapWater, smapUpdated)
 
-loadToolbox :: Renderer-> FilePath -> FilePath -> TextureMap -> SpriteMap -> IO (TextureMap, SpriteMap)
-loadToolbox rdr pathTool pathCabane tmap smap = do
+loadToolbox :: Renderer-> FilePath -> FilePath -> FilePath -> FilePath ->TextureMap -> SpriteMap -> IO (TextureMap, SpriteMap)
+loadToolbox rdr pathTool pathZR pathZI pathZC tmap smap = do
   tmapTool <- TM.loadTexture rdr pathTool (TextureId "toolbox") tmap
-  tmapCabane <- TM.loadTexture rdr pathCabane (TextureId "ZR_Icon") tmapTool
+  tmapZR <- TM.loadTexture rdr pathZR (TextureId "ZR_Icon") tmapTool
+  tmapZI <- TM.loadTexture rdr pathZI (TextureId "ZI_Icon") tmapZR
+  tmapZC <- TM.loadTexture rdr pathZC (TextureId "ZC_Icon") tmapZI
   let spriteToolbox = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId "toolbox") (S.mkArea 0 0 largeur_Toolbox hauteur_Toolbox)
-  let spriteCabane = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId "ZR_Icon") (S.mkArea 0 0 largeur_ZRBouton hauteur_ZRBouton)
-  let smap' = SM.addSprite (SpriteId "ZR_Icon") spriteCabane $
+  let spriteZR = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId "ZR_Icon") (S.mkArea 0 0 largeur_ZRBouton hauteur_ZRBouton)
+  let spriteZI = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId "ZI_Icon") (S.mkArea 0 0 largeur_ZIBouton hauteur_ZIBouton)
+  let spriteZC = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId "ZC_Icon") (S.mkArea 0 0 largeur_ZCBouton hauteur_ZCBouton)
+  let smap' = SM.addSprite (SpriteId "ZI_Icon") spriteZI $
+              SM.addSprite (SpriteId "ZC_Icon") spriteZC $
+              SM.addSprite (SpriteId "ZR_Icon") spriteZR $
               SM.addSprite (SpriteId "toolbox") spriteToolbox smap
-  return (tmapCabane, smap')
+  return (tmapZC, smap')
 
-loadBuilding :: Renderer -> FilePath -> TextureMap -> SpriteMap -> IO (TextureMap, SpriteMap)
-loadBuilding rdr pathCabane tmap smap = do
-  tmapZR <- TM.loadTexture rdr pathCabane (TextureId "ZR_building") tmap
-  let sprite = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId "ZR_building") (S.mkArea 0 0 (2*largeur_ZR) (2*hauteur_ZR))
-  let smap' = SM.addSprite (SpriteId "ZR_building") sprite smap
-  return (tmapZR, smap')
+loadBuilding :: Renderer -> FilePath -> FilePath -> FilePath -> TextureMap -> SpriteMap -> IO (TextureMap, SpriteMap)
+loadBuilding rdr pathZR pathZI pathZC tmap smap = do
+  tmapZR <- TM.loadTexture rdr pathZR (TextureId "ZR_building") tmap
+  tmapZI <- TM.loadTexture rdr pathZI (TextureId "ZI_building") tmapZR
+  tmapZC <- TM.loadTexture rdr pathZC (TextureId "ZC_building") tmapZI
+  let spriteZR = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId "ZR_building") (S.mkArea 0 0 (2*largeur_ZR) (2*hauteur_ZR))
+  let spriteZI = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId "ZI_building") (S.mkArea 0 0 (2*largeur_ZI) (2*hauteur_ZI))
+  let spriteZC = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId "ZC_building") (S.mkArea 0 0 (2*largeur_ZC) (2*hauteur_ZC))
+  let smap' = SM.addSprite (SpriteId "ZC_building") spriteZC $
+              SM.addSprite (SpriteId "ZI_building") spriteZI $
+              SM.addSprite (SpriteId "ZR_building") spriteZR smap
+  return (tmapZC, smap')
 
 displayMonde :: Renderer -> TextureMap -> SpriteMap -> Monde -> IO ()
 displayMonde renderer tmap smap monde = do
@@ -102,6 +114,8 @@ displayMonde renderer tmap smap monde = do
                 Just (Eau _)   ->  SpriteId "water"
                 Just (Grass _) ->  SpriteId "grass"
                 Just (ZR _ _)  ->  SpriteId "ZR_building"
+                Just (ZI _ _)  ->  SpriteId "ZI_building"
+                Just (ZC _ _)  ->  SpriteId "ZC_building"
         case SM.fetchSprite spriteId smap of
 --             sprite -> S.displaySprite renderer tmap (S.moveTo sprite (fromIntegral (x * caseSize)) (fromIntegral (y * caseSize)))
               sprite -> S.displaySprite renderer tmap (S.moveTo sprite (fromIntegral (zone_x * caseSize)) (fromIntegral (zone_y * caseSize)))
@@ -110,11 +124,15 @@ displayMonde renderer tmap smap monde = do
 
 displayToolbox :: Renderer -> TextureMap -> SpriteMap -> IO ()
 displayToolbox renderer tmap smap = do
-    let toolboxArea = SDL.Rectangle (P (V2 (fromIntegral window_largeur - 200) 0)) (V2 200 300)
-    let cabaneTexture = SM.fetchSprite (SpriteId "ZR_Icon") smap
+    let zRTexture = SM.fetchSprite (SpriteId "ZR_Icon") smap
+    let zITexture = SM.fetchSprite (SpriteId "ZI_Icon") smap
+    let zCTexture = SM.fetchSprite (SpriteId "ZC_Icon") smap
     let toolboxTexture = SM.fetchSprite (SpriteId "toolbox") smap
     S.displaySprite renderer tmap (S.moveTo toolboxTexture (fromIntegral position_Toolbox_x) (fromIntegral position_Toolbox_y))
-    S.displaySprite renderer tmap (S.moveTo cabaneTexture (fromIntegral position_ZRBouton_x) (fromIntegral position_ZRBouton_y))
+    S.displaySprite renderer tmap (S.moveTo zRTexture (fromIntegral position_ZRBouton_x) (fromIntegral position_ZRBouton_y))
+    S.displaySprite renderer tmap (S.moveTo zITexture (fromIntegral position_ZIBouton_x) (fromIntegral position_ZIBouton_y))
+    S.displaySprite renderer tmap (S.moveTo zCTexture (fromIntegral position_ZCBouton_x) (fromIntegral position_ZCBouton_y))
+
 
 
 main :: IO ()
@@ -131,9 +149,9 @@ main = do
   -- chargement du monde
   (tmap'', smap'') <- loadMonde renderer "assets/soil.bmp" "assets/grass.bmp" "assets/water.bmp" tmap' smap'
   -- chargement de la toolbox
-  (tmap''', smap''') <- loadToolbox renderer "assets/tool.bmp" "assets/zone_residence.bmp" tmap'' smap''
+  (tmap3, smap3) <- loadToolbox renderer "assets/tool.bmp" "assets/zone_residence.bmp" "assets/zone_industrielle.bmp" "assets/zone_commerciale.bmp" tmap'' smap''
   -- chargement du batiment
-  (tmap4, smap4) <- loadBuilding renderer "assets/ZR_building.bmp" tmap''' smap'''
+  (tmap4, smap4) <- loadBuilding renderer "assets/ZR_building.bmp" "assets/ZI_building.bmp" "assets/ZC_building.bmp" tmap3 smap3
   -- initialisation du monde
   monde <- initMonde window_largeur window_hauteur
   -- initialisation de l'état du jeu

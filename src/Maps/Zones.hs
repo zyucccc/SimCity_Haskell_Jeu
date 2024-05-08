@@ -73,7 +73,11 @@ zoneCoord zone = coord_forme $ zoneForme zone
 createZone_ZR :: Coord -> Zone
 createZone_ZR (C x y) = ZR (Rectangle (C x y) largeur_ZR hauteur_ZR) []
 
+createZone_ZI :: Coord -> Zone
+createZone_ZI (C x y) = ZI (Rectangle (C x y) largeur_ZI hauteur_ZI) []
 
+createZone_ZC :: Coord -> Zone
+createZone_ZC (C x y) = ZC (Rectangle (C x y) largeur_ZC hauteur_ZC) []
 
 
 

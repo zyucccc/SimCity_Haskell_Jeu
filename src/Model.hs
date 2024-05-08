@@ -82,27 +82,15 @@ handleMouseClick_BuildZone gs =
                                         Just ZRType -> case check_DejaBuild_Monde ZRType coord_pixel notre_monde of
                                             True -> gs
                                             False -> gs {displayText = Just "build ZRType", monde = placeZone (createZone_ZR coord_case) notre_monde }
+                                        Just ZIType -> case check_DejaBuild_Monde ZIType coord_pixel notre_monde of
+                                            True -> gs
+                                            False -> gs {displayText = Just "build ZIType", monde = placeZone (createZone_ZI coord_case) notre_monde }
+                                        Just ZCType -> case check_DejaBuild_Monde ZCType coord_pixel notre_monde of
+                                            True -> gs
+                                            False -> gs {displayText = Just "build ZCType", monde = placeZone (createZone_ZC coord_case) notre_monde }
                                         _ -> gs
                      Nothing -> gs
 
---handleMouseClick_BuildZone :: GameState -> GameState
---handleMouseClick_BuildZone gs =
---  let (pressed,pos) = mouse_state gs
---      px = fromIntegral $ persoX gs
---      py = fromIntegral $ persoY gs
---      notre_monde = monde gs
---  in case pressed of
---        False -> gs
---        True -> case pos of
---                     Just (P (V2 x y)) ->
---                            let coord_pixel = C (fromIntegral x) (fromIntegral y)
---                                coord_case = coordToRowCol coord_pixel
---                                in case checkCoord_Monde coord_case notre_monde of
---                                    True -> gs
---                                    False -> case selectedZone gs of
---                                        Just ZRType -> gs {displayText = Just "build ZRType", monde = placeZone (createZone_ZR coord_pixel) notre_monde }
---                                        _ -> gs
---                     Nothing -> gs
 
 handleMouseClick_BatimentType :: GameState -> GameState
 handleMouseClick_BatimentType gs =
@@ -115,6 +103,10 @@ handleMouseClick_BatimentType gs =
                      Just (P (V2 x y)) ->
                             if  x > fromIntegral position_ZRBouton_x  && x < fromIntegral (position_ZRBouton_x + largeur_ZRBouton) && y > fromIntegral position_ZRBouton_y  && y < fromIntegral (position_ZRBouton_y + hauteur_ZRBouton)
                             then gs { displayText = Just "build ZRType" , selectedZone = Just ZRType }
+                            else if x > fromIntegral position_ZIBouton_x  && x < fromIntegral (position_ZIBouton_x + largeur_ZIBouton) && y > fromIntegral position_ZIBouton_y  && y < fromIntegral (position_ZIBouton_y + hauteur_ZIBouton)
+                            then gs { displayText = Just "build ZIType" , selectedZone = Just ZIType }
+                            else if  x > fromIntegral position_ZCBouton_x  && x < fromIntegral (position_ZCBouton_x + largeur_ZCBouton) && y > fromIntegral position_ZCBouton_y  && y < fromIntegral (position_ZCBouton_y + hauteur_ZCBouton)
+                            then gs { displayText = Just "build ZCType" , selectedZone = Just ZCType }
                             else gs
                      Nothing -> gs
 
