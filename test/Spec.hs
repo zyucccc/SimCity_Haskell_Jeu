@@ -1,2 +1,9 @@
+
+import Test.Hspec
+import TestProperties as TP
+
 main :: IO ()
-main = putStrLn "Test suite not yet implemented"
+main = hspec $ do
+  --TP.testInitMonde
+  TP.testUpdateEconomic
+  TP.testCountZC
