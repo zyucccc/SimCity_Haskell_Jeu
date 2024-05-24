@@ -24,15 +24,12 @@ data Economic = Economic {
   money :: CInt
 } deriving (Show)
 
--- 初始化经济状态
-initEconomic :: Economic
-initEconomic = Economic 5000  -- 初始资金为5000
 
--- 游戏状态数据类型，包含角色坐标、速度、鼠标状态、显示文本、世界、选择的区域、城市、下一个区域ID和经济状态
-data GameState = GameState { persoX :: Int
-                           , persoY :: Int
-                           , speed :: Int
-                           , mouse_state :: MouseState
+initEconomic :: Economic
+initEconomic = Economic 5000  -- init economic == 5000
+
+
+data GameState = GameState { mouse_state :: MouseState
                            , displayText :: Maybe String
                            , monde :: Monde
                            , selectedZone :: Maybe ZoneType
@@ -45,36 +42,36 @@ data GameState = GameState { persoX :: Int
 
 
 
--- 初始化游戏状态
+-- init game state
 initGameState :: Monde -> GameState
-initGameState monde = GameState 200 300 4 (False, Nothing) Nothing monde Nothing initVille (ZoneId 0) initEconomic 0
+initGameState monde = GameState (False, Nothing) Nothing monde Nothing initVille (ZoneId 0) initEconomic 0
 
 -- 角色左移
-moveLeft :: GameState -> GameState
-moveLeft gs = Debug.Trace.trace "Keyboard: Move left" gs { persoX = persoX gs - speed gs }
+--moveLeft :: GameState -> GameState
+--moveLeft gs = Debug.Trace.trace "Keyboard: Move left" gs { persoX = persoX gs - speed gs }
+--
+---- 角色右移
+--moveRight :: GameState -> GameState
+--moveRight gs = Debug.Trace.trace "Keyboard: Move Right" gs { persoX = persoX gs + speed gs }
+--
+---- 角色上移
+--moveUp :: GameState -> GameState
+--moveUp gs = Debug.Trace.trace "Keyboard: Move Up" gs { persoY = persoY gs - speed gs }
+--
+---- 角色下移
+--moveDown :: GameState -> GameState
+--moveDown gs = Debug.Trace.trace "Keyboard: Move Down" gs { persoY = persoY gs + speed gs }
 
--- 角色右移
-moveRight :: GameState -> GameState
-moveRight gs = Debug.Trace.trace "Keyboard: Move Right" gs { persoX = persoX gs + speed gs }
-
--- 角色上移
-moveUp :: GameState -> GameState
-moveUp gs = Debug.Trace.trace "Keyboard: Move Up" gs { persoY = persoY gs - speed gs }
-
--- 角色下移
-moveDown :: GameState -> GameState
-moveDown gs = Debug.Trace.trace "Keyboard: Move Down" gs { persoY = persoY gs + speed gs }
-
--- 更新经济状态，根据商业区的数量增加钱数
+-- update gamestate(economic) every 3s en fonction du nombre de zones commerciales
 
 updateEconomic :: GameState -> GameState
 updateEconomic gs =
   let currentMoney = money (economic gs)
       zcCount = countZC (monde gs)
-      newMoney = currentMoney + fromIntegral zcCount * 10  -- 将 zcCount 转换为 CInt-- 假设每个商业区每段时间增加10元
+      newMoney = currentMoney + fromIntegral zcCount * 10
   in gs { economic = (economic gs) { money = newMoney }, economicUpdateTime = 0 }
 
--- 计算商业区的数量
+-- calcul le nb de zones commerciales actuelles
 countZC :: Monde -> Int
 countZC monde =
     let zcZones = filter isZC $ Map.elems monde
@@ -86,22 +83,10 @@ isZC :: Maybe Zone -> Bool
 isZC (Just (ZC _ _)) = True
 isZC _ = False
 
--- 游戏主循环，每一帧调用，根据键盘和鼠标输入更新游戏状态
+-- game loop, update game state every frame (mouse state+keyboard state)
 gameStep :: RealFrac a => GameState -> Keyboard -> MouseState -> a -> GameState
 gameStep gstate kbd mos deltaTime =
-  let gstate' = (if K.keypressed KeycodeLeft kbd
-               then moveLeft else id)
-              .
-              (if K.keypressed KeycodeRight kbd
-               then moveRight else id)
-              .
-              (if K.keypressed KeycodeUp kbd
-               then moveUp else id)
-              .
-              (if K.keypressed KeycodeDown kbd
-               then moveDown else id)
-              .
-              (if K.keypressed KeycodeE kbd
+  let gstate' = (if K.keypressed KeycodeE kbd
                then handleClavierE else id)
               .
               (if K.keypressed KeycodeV kbd
@@ -118,16 +103,14 @@ gameStep gstate kbd mos deltaTime =
                  else gstate' { economicUpdateTime = newEconomicUpdateTime }
   in gstate''
 
--- 处理鼠标点击事件
+--handle events des mouses
 handleMouseClick :: GameState -> GameState
-handleMouseClick gs = handleMouseClick_BatimentType $ handleMouseClick_BuildZone $ handleMouseClick_touche gs
+handleMouseClick gs = handleMouseClick_BatimentType $ handleMouseClick_BuildZone gs
 
--- 处理在地图上建造区域的鼠标点击事件
+-- hendle mouse click pour construire des zones
 handleMouseClick_BuildZone :: GameState -> GameState
 handleMouseClick_BuildZone gs =
   let (pressed, pos) = mouse_state gs
-      px = fromIntegral $ persoX gs
-      py = fromIntegral $ persoY gs
       notre_monde = monde gs
   in case pressed of
         False -> gs
@@ -187,6 +170,20 @@ handleMouseClick_BuildZone gs =
                                                       in if money_afterBuild - 100 < 0 then gs { displayText = Just "Pas assez d'argent!" }
                                                          else gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), economic = Economic money_afterBuild, displayText = Just ("build RouteType_Horizontal in " ++ show (ville gs)) }
 --                                            False -> let new_zone = createZone_Route coord_case Horizontal in gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), displayText = Just ("build RouteType_Horizontal in "++ show (ville gs)) }
+                                        Just CentraleType -> case check_DejaBuild_Monde CentraleType coord_pixel notre_monde of
+                                            True -> gs
+                                            False -> let new_zone = createZone_Centrale coord_case
+                                                         Economic money_actuel = economic gs
+                                                         Economic money_afterBuild = Economic (money_actuel - 800)
+                                                      in if money_afterBuild - 800 < 0 then gs { displayText = Just "Pas assez d'argent!" }
+                                                         else gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), economic = Economic money_afterBuild, displayText = Just ("build CentraleType in " ++ show (ville gs)) }
+                                        Just CableType -> case check_DejaBuild_Monde CableType coord_pixel notre_monde of
+                                            True -> gs
+                                            False -> let new_zone = createZone_Cable coord_case
+                                                         Economic money_actuel = economic gs
+                                                         Economic money_afterBuild = Economic (money_actuel - 50)
+                                                      in if money_afterBuild - 50 < 0 then gs { displayText = Just "Pas assez d'argent!" }
+                                                         else gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), economic = Economic money_afterBuild, displayText = Just ("build CableType in " ++ show (ville gs)) }
                                         _ -> gs
                      Nothing -> gs
 
@@ -194,50 +191,47 @@ handleMouseClick_BuildZone gs =
 handleMouseClick_BatimentType :: GameState -> GameState
 handleMouseClick_BatimentType gs =
   let (pressed, pos) = mouse_state gs
-      px = fromIntegral $ persoX gs
-      py = fromIntegral $ persoY gs
   in case pressed of
         False -> gs
         True -> case pos of
                      Just (P (V2 x y)) ->
-                            if x > fromIntegral position_ZRBouton_x && x < fromIntegral (position_ZRBouton_x + largeur_ZRBouton) && y > fromIntegral position_ZRBouton_y && y < fromIntegral (position_ZRBouton_y + hauteur_ZRBouton)
+                            if x > fromIntegral position_ZRBouton_x && x < fromIntegral (position_ZRBouton_x + largeur_Bouton) && y > fromIntegral position_ZRBouton_y && y < fromIntegral (position_ZRBouton_y + hauteur_Bouton)
                             then gs { displayText = Just "choose ZRType", selectedZone = Just ZRType }
-                            else if x > fromIntegral position_ZIBouton_x && x < fromIntegral (position_ZIBouton_x + largeur_ZIBouton) && y > fromIntegral position_ZIBouton_y && y < fromIntegral (position_ZIBouton_y + hauteur_ZIBouton)
+                            else if x > fromIntegral position_ZIBouton_x && x < fromIntegral (position_ZIBouton_x + largeur_Bouton) && y > fromIntegral position_ZIBouton_y && y < fromIntegral (position_ZIBouton_y + hauteur_Bouton)
                             then gs { displayText = Just "choose ZIType", selectedZone = Just ZIType }
-                            else if x > fromIntegral position_ZCBouton_x && x < fromIntegral (position_ZCBouton_x + largeur_ZCBouton) && y > fromIntegral position_ZCBouton_y && y < fromIntegral (position_ZCBouton_y + hauteur_ZCBouton)
+                            else if x > fromIntegral position_ZCBouton_x && x < fromIntegral (position_ZCBouton_x + largeur_Bouton) && y > fromIntegral position_ZCBouton_y && y < fromIntegral (position_ZCBouton_y + hauteur_Bouton)
                             then gs { displayText = Just "choose ZCType", selectedZone = Just ZCType }
-                            else if x > fromIntegral position_ADBouton_x && x < fromIntegral (position_ADBouton_x + largeur_ADBouton) && y > fromIntegral position_ADBouton_y && y < fromIntegral (position_ADBouton_y + hauteur_ADBouton)
+                            else if x > fromIntegral position_ADBouton_x && x < fromIntegral (position_ADBouton_x + largeur_Bouton) && y > fromIntegral position_ADBouton_y && y < fromIntegral (position_ADBouton_y + hauteur_Bouton)
                             then gs { displayText = Just "choose AdminType", selectedZone = Just AdminType }
-                            else if x > fromIntegral position_routeBoutonVerticale_x && x < fromIntegral (position_routeBoutonVerticale_x + largeur_routeBouton) && y > fromIntegral position_routeBoutonVerticale_y && y < fromIntegral (position_routeBoutonVerticale_y + hauteur_routeBouton)
+                            else if x > fromIntegral position_routeBoutonVerticale_x && x < fromIntegral (position_routeBoutonVerticale_x + largeur_Bouton) && y > fromIntegral position_routeBoutonVerticale_y && y < fromIntegral (position_routeBoutonVerticale_y + hauteur_Bouton)
                             then gs { displayText = Just "choose Route Verticale", selectedZone = Just RouteType_Vertical }
-                            else if x > fromIntegral position_routeBoutonHoriz_x && x < fromIntegral (position_routeBoutonHoriz_x + largeur_routeBouton) && y > fromIntegral position_routeBoutonHoriz_y && y < fromIntegral (position_routeBoutonHoriz_y + hauteur_routeBouton)
+                            else if x > fromIntegral position_routeBoutonHoriz_x && x < fromIntegral (position_routeBoutonHoriz_x + largeur_Bouton) && y > fromIntegral position_routeBoutonHoriz_y && y < fromIntegral (position_routeBoutonHoriz_y + hauteur_Bouton)
                             then gs { displayText = Just "choose Route Horizontale", selectedZone = Just RouteType_Horizontal }
+                            else if x > fromIntegral position_centrale_x && x < fromIntegral (position_centrale_x + largeur_Bouton) && y > fromIntegral position_centrale_y && y < fromIntegral (position_centrale_y + hauteur_Bouton)
+                            then gs { displayText = Just "choose Centrale", selectedZone = Just CentraleType }
+                            else if x > fromIntegral position_cable_x && x < fromIntegral (position_cable_x + largeur_Bouton) && y > fromIntegral position_cable_y && y < fromIntegral (position_cable_y + hauteur_Bouton)
+                            then gs { displayText = Just "choose Cable", selectedZone = Just CableType }
                             else gs
                      Nothing -> gs
 
 -- 处理鼠标点击触碰事件
-handleMouseClick_touche :: GameState -> GameState
-handleMouseClick_touche gs =
-  let (pressed, pos) = mouse_state gs
-      px = fromIntegral $ persoX gs
-      py = fromIntegral $ persoY gs
-  in case pressed of
-        False -> gs
-        True -> case pos of
-                     Just (P (V2 x y)) ->
-                            if x > px && x < px + 100 && y > py && y < py + 100
-                            then gs { displayText = Just "Touché!" }
-                            else gs
-                     Nothing -> gs
+--handleMouseClick_touche :: GameState -> GameState
+--handleMouseClick_touche gs =
+--  let (pressed, pos) = mouse_state gs
+--  in case pressed of
+--        False -> gs
+--        True -> case pos of
+--                     Just (P (V2 x y)) ->
+--                            if x > px && x < px + 100 && y > py && y < py + 100
+--                            then gs { displayText = Just "Touché!" }
+--                            else gs
+--                     Nothing -> gs
 
--- 键盘处理函数
--- 显示当前的钱数
 -- Clavier
 -- afficher l'argent actuel
 handleClavierE :: GameState -> GameState
 handleClavierE gs = gs { displayText = Just ("Money actuel: " ++ show(economic gs)) }
 
--- 显示当前的城市
 -- afficher la ville actuel
 handleClavierV :: GameState -> GameState
 handleClavierV gs = gs { displayText = Just ("Ville actuel: " ++ show(ville gs)) }

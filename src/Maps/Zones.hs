@@ -22,8 +22,10 @@ data Zone
   | ZI Forme [Batiment]
   | ZC Forme [Batiment]
   | Admin Forme Batiment
+  | Centrale Forme
+  | Cable Forme
 
-data ZoneType = EauType | GrassType | TerreType | RouteType_Vertical | RouteType_Horizontal | ZRType | ZIType | ZCType | AdminType deriving (Eq, Ord)
+data ZoneType = EauType | GrassType | TerreType | RouteType_Vertical | RouteType_Horizontal | ZRType | ZIType | ZCType | AdminType | CentraleType | CableType deriving (Eq, Ord)
 
 instance Show ZoneType where
       show EauType = "Eau"
@@ -35,6 +37,8 @@ instance Show ZoneType where
       show ZIType = "Zone Industrielle"
       show ZCType = "Zone Commerciale"
       show AdminType = "Administration"
+      show CentraleType = "Centrale"
+      show CableType = "Cable"
 
 
 instance Show Zone where
@@ -46,6 +50,9 @@ instance Show Zone where
     show (ZI f _) = "Zone Industrielle " ++ show f
     show (ZC f _) = "Zone Commerciale " ++ show f
     show (Admin f _) = "Administration " ++ show f
+    show (Centrale f) = "Centrale " ++ show f
+    show (Cable f) = "Cable " ++ show f
+
 
 instance Eq Zone where
     (Eau f) == (Eau f') = f == f'
@@ -72,6 +79,8 @@ zoneForme (ZR f _) = f
 zoneForme (ZI f _) = f
 zoneForme (ZC f _) = f
 zoneForme (Admin f _) = f
+zoneForme (Centrale f) = f
+zoneForme (Cable f) = f
 
 
 -- accept une zone et renvoie la liste des cases qu'elle occupe.
@@ -96,6 +105,12 @@ createZone_Admin (C x y) bat = Admin (Rectangle (C x y) largeur_Admin hauteur_Ad
 
 createZone_Route :: Coord -> Direction_Route -> Zone
 createZone_Route (C x y) dir = Route (Rectangle (C x y) (largeur_route `div` 2) (hauteur_route `div` 2)) dir
+
+createZone_Centrale :: Coord -> Zone
+createZone_Centrale (C x y) = Centrale (Rectangle (C x y) (largeur_Centrale) (hauteur_Centrale))
+
+createZone_Cable :: Coord -> Zone
+createZone_Cable (C x y) = Cable (Rectangle (C x y) (largeur_cable `div` 2) (hauteur_cable `div` 2))
 
 
 

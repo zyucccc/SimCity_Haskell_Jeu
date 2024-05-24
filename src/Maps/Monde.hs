@@ -32,6 +32,8 @@ check_DejaBuild_Monde zoneType (C x y) monde =
                             ZIType -> (largeur_ZI `div` caseSize, hauteur_ZI `div` caseSize)
                             ZCType -> (largeur_ZC `div` caseSize, hauteur_ZC `div` caseSize)
                             AdminType -> (largeur_Admin `div` caseSize, hauteur_Admin `div` caseSize)
+                            CentraleType -> (largeur_Centrale `div` caseSize, hauteur_Centrale `div` caseSize)
+                            CableType -> (0, 0)
                             RouteType_Vertical -> (0, 0)
                             RouteType_Horizontal -> (0, 0)
                             _ -> (caseSize `div` caseSize, caseSize `div` caseSize)
@@ -43,6 +45,8 @@ check_DejaBuild_Monde zoneType (C x y) monde =
                       Just (Just (ZC _ _)) -> True
                       Just (Just (Admin _ _)) -> True
                       Just (Just (Route _ _)) -> True
+                      Just (Just (Centrale _)) -> True
+                      Just (Just (Cable _)) -> True
                       _ -> False) coords
 
 -- verifier si il y a deja une zone construit sur une case
@@ -56,6 +60,8 @@ check_DejaBuild_Monde_Case coord monde =
       Just (Just (ZC _ _)) -> True
       Just (Just (Admin _ _)) -> True
       Just (Just (Route _ _)) -> True
+      Just (Just (Centrale _)) -> True
+      Just (Just (Cable _)) -> True
       _ -> False
 
 --verifier si le coord correspond à une case de Eau ou d'autre Batiment
@@ -68,6 +74,9 @@ checkCoord_Monde coord_pixel monde =
     Just (Just (ZI _ _)) -> True
     Just (Just (ZC _ _)) -> True
     Just (Just (Admin _ _)) -> True
+    Just (Just (Route _ _)) -> True
+    Just (Just (Centrale _)) -> True
+    Just (Just (Cable _)) -> True
     _ -> False
 
 -- placer une forme sur la map

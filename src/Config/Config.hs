@@ -53,6 +53,18 @@ position_ZCBouton_x = 1610
 position_ZCBouton_y :: CInt
 position_ZCBouton_y = 310
 
+position_centrale_x :: CInt
+position_centrale_x = 1610
+
+position_centrale_y :: CInt
+position_centrale_y = 380
+
+position_cable_x :: CInt
+position_cable_x = 1755
+
+position_cable_y :: CInt
+position_cable_y = 380
+
 position_ADBouton_x :: CInt
 position_ADBouton_x = 1755
 
@@ -71,35 +83,11 @@ position_routeBoutonHoriz_x = 1755
 position_routeBoutonHoriz_y :: CInt
 position_routeBoutonHoriz_y = 310
 
-largeur_ZRBouton :: CInt
-largeur_ZRBouton = 140
+largeur_Bouton :: CInt
+largeur_Bouton = 140
 
-hauteur_ZRBouton :: CInt
-hauteur_ZRBouton = 65
-
-largeur_ZIBouton :: CInt
-largeur_ZIBouton = 140
-
-hauteur_ZIBouton :: CInt
-hauteur_ZIBouton = 65
-
-largeur_ZCBouton :: CInt
-largeur_ZCBouton = 140
-
-hauteur_ZCBouton :: CInt
-hauteur_ZCBouton = 65
-
-largeur_ADBouton :: CInt
-largeur_ADBouton = 140
-
-hauteur_ADBouton :: CInt
-hauteur_ADBouton = 65
-
-largeur_routeBouton :: CInt
-largeur_routeBouton = 140
-
-hauteur_routeBouton :: CInt
-hauteur_routeBouton = 65
+hauteur_Bouton :: CInt
+hauteur_Bouton = 65
 
 --- Batiment
 largeur_ZR :: CInt
@@ -126,8 +114,20 @@ largeur_Admin = caseSize
 hauteur_Admin :: CInt
 hauteur_Admin = caseSize
 
+largeur_Centrale :: CInt
+largeur_Centrale = caseSize
+
+hauteur_Centrale :: CInt
+hauteur_Centrale = caseSize
+
 largeur_route :: CInt
 largeur_route = caseSize
 
 hauteur_route :: CInt
 hauteur_route = caseSize
+
+largeur_cable :: CInt
+largeur_cable = caseSize
+
+hauteur_cable :: CInt
+hauteur_cable = caseSize

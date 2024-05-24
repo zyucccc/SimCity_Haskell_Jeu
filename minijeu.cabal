@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8e675be42bdb6694808dea5329a8bef988bab07853b215b8b2328d7ff0d69937
+-- hash: f228f5d981f40dcb2fa6da0bc942dcad9a469e9cdf0eadf80fb3e62215e5128d
 
 name:           minijeu
 version:        0.1.0.0
@@ -46,8 +46,10 @@ library
   extra-lib-dirs:
       /usr/local/lib
   build-depends:
-      base >=4.7 && <5
+      QuickCheck
+    , base >=4.7 && <5
     , containers
+    , hspec
     , linear
     , random
     , sdl2
@@ -64,8 +66,10 @@ executable minijeu-exe
       /usr/local/lib
       /usr/local/lib
   build-depends:
-      base >=4.7 && <5
+      QuickCheck
+    , base >=4.7 && <5
     , containers
+    , hspec
     , linear
     , minijeu
     , random
@@ -76,6 +80,7 @@ test-suite minijeu-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      TestProperties
       Paths_minijeu
   hs-source-dirs:
       test
@@ -84,8 +89,10 @@ test-suite minijeu-test
       /usr/local/lib
       /usr/local/lib
   build-depends:
-      base >=4.7 && <5
+      QuickCheck
+    , base >=4.7 && <5
     , containers
+    , hspec
     , linear
     , minijeu
     , random
