@@ -6,7 +6,7 @@ import GHC.Int (Int32)
 import Foreign.C.Types (CInt)
 import Events.Keyboard (Keyboard)
 import qualified Events.Keyboard as K
-
+import qualified Data.List as List
 import Events.Mouse (MouseState)
 import qualified Events.Mouse as MOS
 
@@ -44,7 +44,7 @@ data GameState = GameState { mouse_state :: MouseState
 
 -- init game state
 initGameState :: Monde -> GameState
-initGameState monde = GameState (False, Nothing) Nothing monde Nothing initVille (ZoneId 0) initEconomic 0
+initGameState monde = GameState (False, Nothing) Nothing monde Nothing initVille (ZoneId 1) initEconomic 0
 
 -- update gamestate(economic) every 3s en fonction du nombre de zones commerciales
 
@@ -78,6 +78,9 @@ gameStep gstate kbd mos deltaTime =
               .
               (if K.keypressed KeycodeB kbd
                then handleClavierB else id)
+              .
+              (if K.keypressed KeycodeT kbd
+               then handleClavierT else id)
               .
               (if MOS.mousePressed mos
                then handleMouseClick else id)
@@ -223,11 +226,24 @@ handleClavierB gs =
                              ZoneId id = getZoneIdByZone zone (ville gs)
                              zone_Coord = zoneCoord zone
                              monde' = monde gs
+                             ville' = ville gs
                           in
                           case zone of
-                            ZR f batiments -> gs { monde = Map.insert zone_Coord (Just(buildBatiment zone (Cabane zone_Coord id []))) monde', displayText = Just "build un nouveau Cabane" }
-                            ZI f batiments -> gs { monde = Map.insert zone_Coord (Just(buildBatiment zone (Atelier zone_Coord id []))) monde', displayText = Just "build un nouveau Atelier" }
-                            ZC f batiments -> gs { monde = Map.insert zone_Coord (Just(buildBatiment zone (Epicerie zone_Coord id []))) monde', displayText = Just "build un nouveau Epicerie" }
+                            ZR f batiments ->let zone' = ((buildBatiment zone (Cabane zone_Coord id []))) in gs { monde = Map.insert zone_Coord (Just zone') monde', displayText = Just "build un nouveau Cabane" ,ville = ville' { viZones = Map.insert (ZoneId id) zone' (viZones ville') } }
+                            ZI f batiments ->let zone' = ((buildBatiment zone (Atelier zone_Coord id []))) in gs { monde = Map.insert zone_Coord (Just zone') monde', displayText = Just "build un nouveau Atelier" ,ville = ville' { viZones = Map.insert (ZoneId id) zone' (viZones ville') } }
+                            ZC f batiments ->let zone' = ((buildBatiment zone (Epicerie zone_Coord id []))) in gs { monde = Map.insert zone_Coord (Just zone') monde', displayText = Just "build un nouveau Epicerie" ,ville = ville' { viZones = Map.insert (ZoneId id) zone' (viZones ville') } }
                             _ -> gs
                           else gs{displayText = Just "Pas de electricité, vous ne peuvez pas construire les batiments ici"}
+
+-- afficher les nb de batiments totals
+handleClavierT :: GameState -> GameState
+handleClavierT gs =
+  let zones = Map.toList (viZones $ ville gs)
+      zoneInfo = foldl (\acc (id, zone) -> case zone of
+                                       ZR _ batiments -> acc ++ "\nZone Résidentielle, id: " ++ show id ++ ", nombre de batiments: " ++ show (length batiments)
+                                       ZI _ batiments -> acc ++ "\nZone Industrielle, id: " ++ show id ++ ", nombre de batiments: " ++ show (length batiments)
+                                       ZC _ batiments -> acc ++ "\nZone Commerciale, id: " ++ show id ++ ", nombre de batiments: " ++ show (length batiments)
+                                       _ -> acc) "" zones
+  in gs { displayText = Just zoneInfo }
+
 
