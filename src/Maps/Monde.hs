@@ -111,3 +111,7 @@ checkZone_Electrique zone monde =
                       Just (Just (Cable _)) -> True
                       _ -> False) surroundingCoords
 
+-- verifier si cette zone residence ont au moins un cabane
+--checkZone_Residence :: Zone -> Bool
+--checkZone_Residence zone =
+ 

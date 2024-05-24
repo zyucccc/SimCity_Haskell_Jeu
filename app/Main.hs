@@ -1,7 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 module Main where
 
--- 导入所需模块
 import Debug.Trace (trace)
 import Control.Monad (forM_, unless)
 import Control.Concurrent (threadDelay)

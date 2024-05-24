@@ -37,9 +37,9 @@ instance Show BatimentType where
 ------------------------------------------
 newtype Occupation = O String
 
-data Citoyen = Immigrant Coord (Int , Int , Int) Occupation
-             | Habitant Coord (Int , Int , Int) (BatId , Maybe BatId , Maybe BatId) Occupation
-             | Emigrant Coord Occupation
+data Citoyen = Immigrant Coord (CInt , CInt , CInt) (Maybe Occupation)
+             | Habitant Coord (CInt , CInt , CInt) (BatId , Maybe BatId , Maybe BatId) (Maybe Occupation)
+             | Emigrant Coord (Maybe Occupation)
 
 newtype CitId =  CitId String
 
