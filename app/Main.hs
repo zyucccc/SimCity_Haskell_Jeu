@@ -52,6 +52,13 @@ loadBackground rdr path tmap smap = do
   let smap' = SM.addSprite (SpriteId "background") sprite smap
   return (tmap', smap')
 
+--load citoyen
+loadCitoyen :: Renderer -> FilePath -> TextureMap -> SpriteMap -> IO (TextureMap, SpriteMap)
+loadCitoyen rdr path tmap smap = do
+  tmap' <- TM.loadTexture rdr path (TextureId "citoyen") tmap
+  let sprite = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId "citoyen") (S.mkArea 0 0 20 20)
+  let smap' = SM.addSprite (SpriteId "citoyen") sprite smap
+  return (tmap', smap')
 
 -- load texture pour les monde (sol, eau, herbe)
 loadMonde :: Renderer -> FilePath -> FilePath -> FilePath -> TextureMap -> SpriteMap -> IO (TextureMap, SpriteMap)
@@ -184,8 +191,10 @@ main = do
   renderer <- createRenderer window (-1) defaultRenderer
     -- chargement de l'image du fond
   (tmap, smap) <- loadBackground renderer "assets/background.bmp" TM.createTextureMap SM.createSpriteMap
+    -- chargement de citoyen
+  (tmap', smap') <- loadCitoyen renderer "assets/citoyen.bmp" tmap smap
     -- chargement du monde
-  (tmap'', smap'') <- loadMonde renderer "assets/soil.bmp" "assets/grass.bmp" "assets/water.bmp" tmap smap
+  (tmap'', smap'') <- loadMonde renderer "assets/soil.bmp" "assets/grass.bmp" "assets/water.bmp" tmap' smap'
     -- chargement de la toolbox
   (tmap3, smap3) <- loadToolbox renderer "assets/tool.bmp" "assets/zone_residence.bmp" "assets/zone_industrielle.bmp" "assets/zone_commerciale.bmp" "assets/administratif_bouton.bmp" "assets/route_vertical_bouton.bmp" "assets/route_horizontale_bouton.bmp" "assets/centraleElectrique_bouton.bmp" "assets/cable_bouton.bmp" tmap'' smap''
     -- chargement du batiment
@@ -222,12 +231,12 @@ gameLoop frameRate renderer tmap smap kbd mos gameState = do
   endTime <- time
   let refreshTime = endTime - startTime
   let delayTime = floor (((1.0 / frameRate) - refreshTime) * 1000)
-  threadDelay $ delayTime * 1000 -- micro秒
+  threadDelay $ delayTime * 1000 -- micro seconde
   endTime <- time
   let deltaTime = endTime - startTime
   -- putStrLn $ "Delta time: " <> (show (deltaTime * 1000)) <> " (ms)"
   -- putStrLn $ "Frame rate: " <> (show (1 / deltaTime)) <> " (frame/s)"
-  -- 更新游戏状态  --- update du game state
+  --- update du game state
   let gameState' = M.gameStep gameState{ M.mouse_state = mos' } kbd' mos' deltaTime
   -- let gameState'' = gameState' { M.mouseClick = Nothing }
 

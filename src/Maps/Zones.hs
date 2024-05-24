@@ -83,6 +83,12 @@ zoneForme (Centrale f) = f
 zoneForme (Cable f) = f
 
 
+-- build batiment dans les zones
+buildBatiment :: Zone -> Batiment -> Zone
+buildBatiment (ZR f batiments) bat = ZR f (bat:batiments)
+buildBatiment (ZI f batiments) bat = ZI f (bat:batiments)
+buildBatiment (ZC f batiments) bat = ZC f (bat:batiments)
+
 -- accept une zone et renvoie la liste des cases qu'elle occupe.
 zoneCases :: Zone -> [Coord]
 zoneCases zone = formeCases (zoneForme zone)

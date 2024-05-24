@@ -26,7 +26,7 @@ data Economic = Economic {
 
 
 initEconomic :: Economic
-initEconomic = Economic 5000  -- init economic == 5000
+initEconomic = Economic 8000  -- init economic == 8000
 
 
 data GameState = GameState { mouse_state :: MouseState
@@ -36,7 +36,7 @@ data GameState = GameState { mouse_state :: MouseState
                            , ville :: Ville
                            , nextZoneId :: ZoneId
                            , economic :: Economic
-                           ,economicUpdateTime :: Float
+                           , economicUpdateTime :: Float
                            }
                            deriving (Show)
 
@@ -59,7 +59,7 @@ updateEconomic gs =
 countZC :: Monde -> Int
 countZC monde =
     let zcZones = filter isZC $ Map.elems monde
-        zcCount = length zcZones `div` 4  -- 每个商业区占用4块单元
+        zcCount = length zcZones `div` 4 -- div 4 car 4cases pour une zone commerciale
      in zcCount
 
 
@@ -76,12 +76,15 @@ gameStep gstate kbd mos deltaTime =
               (if K.keypressed KeycodeV kbd
                then handleClavierV else id)
               .
+              (if K.keypressed KeycodeB kbd
+               then handleClavierB else id)
+              .
               (if MOS.mousePressed mos
                then handleMouseClick else id)
               $ gstate
 
       newEconomicUpdateTime = economicUpdateTime gstate' + realToFrac deltaTime
-
+-- chaque 3s, update economic (en fonction de nb de zones commerciales)
       gstate'' = if newEconomicUpdateTime >= 3 --3s
                  then updateEconomic gstate'
                  else gstate' { economicUpdateTime = newEconomicUpdateTime }
@@ -121,7 +124,6 @@ handleMouseClick_BuildZone gs =
                                                          Economic money_afterBuild = Economic (money_actuel - 600)
                                                      in if money_afterBuild - 600 < 0 then gs { displayText = Just "Pas assez d'argent!" }
                                                         else gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), economic = Economic money_afterBuild, displayText = Just ("build ZIType in " ++ show (ville gs)) }
---                                            False -> let new_zone = createZone_ZI coord_case in gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), displayText = Just ("build ZIType in "++ show (ville gs)) }
                                         Just ZCType -> case check_DejaBuild_Monde ZCType coord_pixel notre_monde of
                                             True -> gs
                                             False -> let new_zone = createZone_ZC coord_case
@@ -129,15 +131,13 @@ handleMouseClick_BuildZone gs =
                                                          Economic money_afterBuild = Economic (money_actuel - 500)
                                                      in if money_afterBuild - 500 < 0 then gs { displayText = Just "Pas assez d'argent!" }
                                                         else gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), economic = Economic money_afterBuild, displayText = Just ("build ZCType in " ++ show (ville gs)) }
---                                            False -> let new_zone = createZone_ZC coord_case in gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), displayText = Just ("build ZCType in "++ show (ville gs)) }
                                         Just AdminType -> case check_DejaBuild_Monde AdminType coord_pixel notre_monde of
                                             True -> gs
-                                            False -> let new_zone = createZone_Admin coord_case (Commissariat (Maps.Formes.Rectangle (C (fromIntegral x) (fromIntegral y)) (fromIntegral largeur_Admin) (fromIntegral hauteur_Admin)) coord_case)
+                                            False -> let new_zone = createZone_Admin coord_case (Commissariat coord_case)
                                                          Economic money_actuel = economic gs
                                                          Economic money_afterBuild = Economic (money_actuel - 600)
                                                      in if money_afterBuild - 600 < 0 then gs { displayText = Just "Pas assez d'argent!" }
                                                         else gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), economic = Economic money_afterBuild, displayText = Just ("build AdminType in " ++ show (ville gs)) }
---                                            False -> let new_zone = createZone_Admin coord_case (Commissariat (Maps.Formes.Rectangle (C (fromIntegral x) (fromIntegral y)) (fromIntegral largeur_Admin) (fromIntegral hauteur_Admin)) coord_case) in gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), displayText = Just ("build AdminType"++ show (ville gs)) }
                                         Just RouteType_Vertical -> case check_DejaBuild_Monde RouteType_Vertical coord_pixel notre_monde of
                                             True -> gs
                                             False -> let new_zone = createZone_Route coord_case Vertical
@@ -145,7 +145,6 @@ handleMouseClick_BuildZone gs =
                                                          Economic money_afterBuild = Economic (money_actuel - 100)
                                                       in if money_afterBuild - 100 < 0 then gs { displayText = Just "Pas assez d'argent!" }
                                                          else gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), economic = Economic money_afterBuild, displayText = Just ("build RouteType_Vertical in " ++ show (ville gs)) }
---                                            False -> let new_zone = createZone_Route coord_case Vertical in gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), displayText = Just ("build RouteType_Vertical in "++ show (ville gs)) }
                                         Just RouteType_Horizontal -> case check_DejaBuild_Monde RouteType_Horizontal coord_pixel notre_monde of
                                             True -> gs
                                             False -> let new_zone = createZone_Route coord_case Horizontal
@@ -153,7 +152,6 @@ handleMouseClick_BuildZone gs =
                                                          Economic money_afterBuild = Economic (money_actuel - 100)
                                                       in if money_afterBuild - 100 < 0 then gs { displayText = Just "Pas assez d'argent!" }
                                                          else gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), economic = Economic money_afterBuild, displayText = Just ("build RouteType_Horizontal in " ++ show (ville gs)) }
---                                            False -> let new_zone = createZone_Route coord_case Horizontal in gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), displayText = Just ("build RouteType_Horizontal in "++ show (ville gs)) }
                                         Just CentraleType -> case check_DejaBuild_Monde CentraleType coord_pixel notre_monde of
                                             True -> gs
                                             False -> let new_zone = createZone_Centrale coord_case
@@ -207,3 +205,29 @@ handleClavierE gs = gs { displayText = Just ("Money actuel: " ++ show(economic g
 -- afficher la ville actuel
 handleClavierV :: GameState -> GameState
 handleClavierV gs = gs { displayText = Just ("Ville actuel: " ++ show(ville gs)) }
+
+-- build les batiments dans le zones
+handleClavierB :: GameState -> GameState
+handleClavierB gs =
+   let (pressed, pos) = mouse_state gs
+   in
+   case pos of
+     Just (P (V2 x y)) ->
+       let coord = C (fromIntegral x) (fromIntegral y)
+       in
+         case getZoneByCoord coord (monde gs) of
+           Nothing -> gs
+           -- faut que la zone est lié au electricité avec cable pour build des batiments
+           Just zone -> if checkZone_Electrique zone (monde gs) then
+                          let
+                             ZoneId id = getZoneIdByZone zone (ville gs)
+                             zone_Coord = zoneCoord zone
+                             monde' = monde gs
+                          in
+                          case zone of
+                            ZR f batiments -> gs { monde = Map.insert zone_Coord (Just(buildBatiment zone (Cabane zone_Coord id []))) monde', displayText = Just "build un nouveau Cabane" }
+                            ZI f batiments -> gs { monde = Map.insert zone_Coord (Just(buildBatiment zone (Atelier zone_Coord id []))) monde', displayText = Just "build un nouveau Atelier" }
+                            ZC f batiments -> gs { monde = Map.insert zone_Coord (Just(buildBatiment zone (Epicerie zone_Coord id []))) monde', displayText = Just "build un nouveau Epicerie" }
+                            _ -> gs
+                          else gs{displayText = Just "Pas de electricité, vous ne peuvez pas construire les batiments ici"}
+

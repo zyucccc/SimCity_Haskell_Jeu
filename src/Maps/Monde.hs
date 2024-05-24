@@ -92,4 +92,22 @@ checkCoord_Monde coord_pixel monde =
 -- placer une forme sur la map
 placeZone :: Zone -> Monde -> Monde
 placeZone zone monde = Map.union (Map.fromList $ zip (zoneCases zone) (repeat (Just zone))) monde
---placeZone zone monde = Map.union (Map.fromList $ zip (repeat (zoneCoord zone)) (repeat (Just zone))) monde
+
+-- obtenir la zone by coord
+getZoneByCoord :: Coord -> Monde -> Maybe Zone
+getZoneByCoord coord monde =
+  let coord_case = coordToRowCol coord
+  in case Map.lookup coord_case monde of
+    Just (Just zone) -> Just zone
+    _ -> Nothing
+
+
+-- verifier si la zone est lie avec une cable
+checkZone_Electrique :: Zone -> Monde -> Bool
+checkZone_Electrique zone monde =
+  let zoneCoords = zoneCases zone
+      surroundingCoords = concatMap (\(C x y) -> [C (x + dx) (y + dy) | dx <- [-1..1], dy <- [-1..1], dx /= 0 || dy /= 0]) zoneCoords
+  in any (\coord -> case Map.lookup coord monde of
+                      Just (Just (Cable _)) -> True
+                      _ -> False) surroundingCoords
+

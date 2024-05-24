@@ -1,15 +1,21 @@
 module Entitys.Entitys where
 
+import Foreign.C.Types (CInt (..) )
 import  Maps.Formes (Forme,Coord)
 
 ------------------------------------------
 -- Batiments
 ------------------------------------------
 data Batiment
-  = Cabane Forme Coord Int [CitId]
-  | Atelier Forme Coord Int [CitId]
-  | Epicerie Forme Coord Int [CitId]
-  | Commissariat Forme Coord
+  = Cabane Coord CInt [CitId]
+  | Atelier Coord CInt [CitId]
+  | Epicerie Coord CInt [CitId]
+  | Commissariat Coord
+
+-- nous imposons que les cabane ne peut que construire que dans les zones residentielles
+-- les ateliers dans les zones industrielles
+-- les epicerie dans les zones commerciales
+-- les commissariats dans les zones administratives
 
 newtype BatId =  BatId Int deriving (Eq, Ord)
 

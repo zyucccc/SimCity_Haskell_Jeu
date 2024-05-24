@@ -21,3 +21,13 @@ addZone_Ville zid z (Ville zones cit) = Ville (M.insert zid z zones) cit
 
 prop_ville_sansCollision :: Ville -> Bool
 prop_ville_sansCollision (Ville zones _) = all (\(z1,z2) -> not (collision (zoneForme z1) (zoneForme z2))) [(z1,z2) | z1 <- M.elems zones, z2 <- M.elems zones, z1 /= z2]
+
+--obtenir la zoneID d'une zone
+getZoneIdByZone :: Zone -> Ville -> ZoneId
+getZoneIdByZone targetZone (Ville zones _) =
+  let zoneList = M.elems zones
+      idList = M.keys zones
+      zoneIdPairs = zip zoneList idList
+  in case lookup targetZone zoneIdPairs of
+    Just zoneId -> zoneId
+    Nothing -> error "Zone not found in Ville"
