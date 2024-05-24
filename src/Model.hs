@@ -40,6 +40,11 @@ data GameState = GameState { mouse_state :: MouseState
                            }
                            deriving (Show)
 
+inv_GameState :: GameState -> Bool
+inv_GameState gs = inv_economic_gameState gs
+
+inv_economic_gameState :: GameState -> Bool
+inv_economic_gameState gs = let Economic val = (economic gs) in val >= 0
 
 
 -- init game state
@@ -59,7 +64,7 @@ updateEconomic gs =
 countZC :: Monde -> Int
 countZC monde =
     let zcZones = filter isZC $ Map.elems monde
-        zcCount = length zcZones `div` 4 -- div 4 car 4cases pour une zone commerciale
+        zcCount = length zcZones `div` 4 -- div 4 car 4 cases pour une zone commerciale
      in zcCount
 
 
@@ -113,62 +118,62 @@ handleMouseClick_BuildZone gs =
                                 coord_case = coordToRowCol coord_pixel
                                 ZoneId id = nextZoneId gs
                                 in case selectedZone gs of
-                                        Just ZRType -> case check_DejaBuild_Monde ZRType coord_pixel notre_monde of
+                                        Just ZRType -> case pre_DejaBuild_Monde ZRType coord_pixel notre_monde of
                                             True -> gs
                                             False -> let new_zone = createZone_ZR coord_case
                                                          Economic money_actuel = economic gs
                                                          Economic money_afterBuild = Economic (money_actuel - 300)
-                                                     in if money_afterBuild - 300 < 0 then gs { displayText = Just "Pas assez d'argent!" }
+                                                     in if money_afterBuild  < 0 then gs { displayText = Just "Pas assez d'argent!" }
                                                         else gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), economic = Economic money_afterBuild, displayText = Just ("build ZRType in " ++ show (ville gs)) }
-                                        Just ZIType -> case check_DejaBuild_Monde ZIType coord_pixel notre_monde of
+                                        Just ZIType -> case pre_DejaBuild_Monde ZIType coord_pixel notre_monde of
                                             True -> gs
                                             False -> let new_zone = createZone_ZI coord_case
                                                          Economic money_actuel = economic gs
                                                          Economic money_afterBuild = Economic (money_actuel - 600)
-                                                     in if money_afterBuild - 600 < 0 then gs { displayText = Just "Pas assez d'argent!" }
+                                                     in if money_afterBuild  < 0 then gs { displayText = Just "Pas assez d'argent!" }
                                                         else gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), economic = Economic money_afterBuild, displayText = Just ("build ZIType in " ++ show (ville gs)) }
-                                        Just ZCType -> case check_DejaBuild_Monde ZCType coord_pixel notre_monde of
+                                        Just ZCType -> case pre_DejaBuild_Monde ZCType coord_pixel notre_monde of
                                             True -> gs
                                             False -> let new_zone = createZone_ZC coord_case
                                                          Economic money_actuel = economic gs
                                                          Economic money_afterBuild = Economic (money_actuel - 500)
-                                                     in if money_afterBuild - 500 < 0 then gs { displayText = Just "Pas assez d'argent!" }
+                                                     in if money_afterBuild  < 0 then gs { displayText = Just "Pas assez d'argent!" }
                                                         else gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), economic = Economic money_afterBuild, displayText = Just ("build ZCType in " ++ show (ville gs)) }
-                                        Just AdminType -> case check_DejaBuild_Monde AdminType coord_pixel notre_monde of
+                                        Just AdminType -> case pre_DejaBuild_Monde AdminType coord_pixel notre_monde of
                                             True -> gs
                                             False -> let new_zone = createZone_Admin coord_case (Commissariat coord_case)
                                                          Economic money_actuel = economic gs
                                                          Economic money_afterBuild = Economic (money_actuel - 600)
-                                                     in if money_afterBuild - 600 < 0 then gs { displayText = Just "Pas assez d'argent!" }
+                                                     in if money_afterBuild  < 0 then gs { displayText = Just "Pas assez d'argent!" }
                                                         else gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), economic = Economic money_afterBuild, displayText = Just ("build AdminType in " ++ show (ville gs)) }
-                                        Just RouteType_Vertical -> case check_DejaBuild_Monde RouteType_Vertical coord_pixel notre_monde of
+                                        Just RouteType_Vertical -> case pre_DejaBuild_Monde RouteType_Vertical coord_pixel notre_monde of
                                             True -> gs
                                             False -> let new_zone = createZone_Route coord_case Vertical
                                                          Economic money_actuel = economic gs
                                                          Economic money_afterBuild = Economic (money_actuel - 100)
-                                                      in if money_afterBuild - 100 < 0 then gs { displayText = Just "Pas assez d'argent!" }
+                                                      in if money_afterBuild  < 0 then gs { displayText = Just "Pas assez d'argent!" }
                                                          else gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), economic = Economic money_afterBuild, displayText = Just ("build RouteType_Vertical in " ++ show (ville gs)) }
-                                        Just RouteType_Horizontal -> case check_DejaBuild_Monde RouteType_Horizontal coord_pixel notre_monde of
+                                        Just RouteType_Horizontal -> case pre_DejaBuild_Monde RouteType_Horizontal coord_pixel notre_monde of
                                             True -> gs
                                             False -> let new_zone = createZone_Route coord_case Horizontal
                                                          Economic money_actuel = economic gs
                                                          Economic money_afterBuild = Economic (money_actuel - 100)
-                                                      in if money_afterBuild - 100 < 0 then gs { displayText = Just "Pas assez d'argent!" }
+                                                      in if money_afterBuild  < 0 then gs { displayText = Just "Pas assez d'argent!" }
                                                          else gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), economic = Economic money_afterBuild, displayText = Just ("build RouteType_Horizontal in " ++ show (ville gs)) }
-                                        Just CentraleType -> case check_DejaBuild_Monde CentraleType coord_pixel notre_monde of
+                                        Just CentraleType -> case pre_DejaBuild_Monde CentraleType coord_pixel notre_monde of
                                             True -> gs
                                             False -> let new_zone = createZone_Centrale coord_case
                                                          Economic money_actuel = economic gs
                                                          Economic money_afterBuild = Economic (money_actuel - 800)
-                                                      in if money_afterBuild - 800 < 0 then gs { displayText = Just "Pas assez d'argent!" }
+                                                      in if money_afterBuild  < 0 then gs { displayText = Just "Pas assez d'argent!" }
                                                          else gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), economic = Economic money_afterBuild, displayText = Just ("build CentraleType in " ++ show (ville gs)) }
-                                        Just CableType -> case check_DejaBuild_Monde CableType coord_pixel notre_monde of
+                                        Just CableType -> case pre_DejaBuild_Monde CableType coord_pixel notre_monde of
                                             True -> gs
                                             False -> let new_zone = createZone_Cable coord_case
                                                          Economic money_actuel = economic gs
                                                          Economic money_afterBuild = Economic (money_actuel - 50)
-                                                      in if money_afterBuild - 50 < 0 then gs { displayText = Just "Pas assez d'argent!" }
-                                                         else if not (check_Voisin_Cable coord_pixel notre_monde) then gs { displayText = Just "Pas de centrale ou cable à coté,vous ne peuvez pas construire les cables ici" }
+                                                      in if money_afterBuild  < 0 then gs { displayText = Just "Pas assez d'argent!" }
+                                                         else if not (pre_Voisin_Cable coord_pixel notre_monde) then gs { displayText = Just "Pas de centrale ou cable à coté,vous ne peuvez pas construire les cables ici" }
                                                          else gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), economic = Economic money_afterBuild, displayText = Just ("build CableType in " ++ show (ville gs)) }
                                         _ -> gs
                      Nothing -> gs

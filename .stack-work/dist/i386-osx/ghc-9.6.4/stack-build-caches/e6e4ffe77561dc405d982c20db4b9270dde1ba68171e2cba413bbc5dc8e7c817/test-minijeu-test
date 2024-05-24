@@ -1,7 +1,39 @@
+/Users/zyu/.stack/programs/i386-osx/ghc-9.6.4/lib/ghc-9.6.4/lib/x86_64-osx-ghc-9.6.4/libHSarray-0.5.6.0-ghc9.6.4.dylib:
+  hash: f06a5f4c3ffbb532efb04af4e802d11c5dd85eda0a3c8b442b1a1e058d4239b6
+/Users/zyu/.stack/programs/i386-osx/ghc-9.6.4/lib/ghc-9.6.4/lib/x86_64-osx-ghc-9.6.4/libHSbase-4.18.2.0-ghc9.6.4.dylib:
+  hash: d47cfcf5d9f8aa7c2c761f1dce81a34ec72a86202c0eadce5d8e00d0bcaa69c3
+/Users/zyu/.stack/programs/i386-osx/ghc-9.6.4/lib/ghc-9.6.4/lib/x86_64-osx-ghc-9.6.4/libHSbytestring-0.11.5.3-ghc9.6.4.dylib:
+  hash: 903f19b25be42679431a7133faa704f2bf917d5b07a45673f80a935e5c2ae2f5
+/Users/zyu/.stack/programs/i386-osx/ghc-9.6.4/lib/ghc-9.6.4/lib/x86_64-osx-ghc-9.6.4/libHScontainers-0.6.7-ghc9.6.4.dylib:
+  hash: 2403378ebe5825b56eecb5308ee079d835052b1499ee6c336eb22dd7263deae0
+/Users/zyu/.stack/programs/i386-osx/ghc-9.6.4/lib/ghc-9.6.4/lib/x86_64-osx-ghc-9.6.4/libHSdeepseq-1.4.8.1-ghc9.6.4.dylib:
+  hash: b1055ea3ad1e29cded624d57ec71b26e87b9a601c92f6ef37ffb2595e13d03d9
+/Users/zyu/.stack/programs/i386-osx/ghc-9.6.4/lib/ghc-9.6.4/lib/x86_64-osx-ghc-9.6.4/libHSghc-bignum-1.3-ghc9.6.4.dylib:
+  hash: 403dacd043229419824181258ac6897a16ce059e448c00ab6e4e542364bdacc5
+/Users/zyu/.stack/programs/i386-osx/ghc-9.6.4/lib/ghc-9.6.4/lib/x86_64-osx-ghc-9.6.4/libHSghc-boot-th-9.6.4-ghc9.6.4.dylib:
+  hash: a343d0ad2956d101f31a6f2f32c3fe85c5d9f7cad953e652a5fb66d8bbbb462a
+/Users/zyu/.stack/programs/i386-osx/ghc-9.6.4/lib/ghc-9.6.4/lib/x86_64-osx-ghc-9.6.4/libHSghc-prim-0.10.0-ghc9.6.4.dylib:
+  hash: f2fd9c2d9f4ea02165f48ef1b78c9a16ab21ee185e4857729c4a9fea92b026ca
+/Users/zyu/.stack/programs/i386-osx/ghc-9.6.4/lib/ghc-9.6.4/lib/x86_64-osx-ghc-9.6.4/libHSmtl-2.3.1-ghc9.6.4.dylib:
+  hash: 29440ba445e6e10149e8afcd09dd9b434f692f8e0ccb2c2980d22140b3f593ca
+/Users/zyu/.stack/programs/i386-osx/ghc-9.6.4/lib/ghc-9.6.4/lib/x86_64-osx-ghc-9.6.4/libHSpretty-1.1.3.6-ghc9.6.4.dylib:
+  hash: 7ec05b72a7a5dac44c19173bafe0ca7d898cb378f7204205e274f40030e1bb38
+? /Users/zyu/.stack/programs/i386-osx/ghc-9.6.4/lib/ghc-9.6.4/lib/x86_64-osx-ghc-9.6.4/libHStemplate-haskell-2.20.0.0-ghc9.6.4.dylib
+: hash: cf30d60e3a7c0fa5c52fe87e2a8419c91e869a8d79764f61ff2de3147abe1eff
+/Users/zyu/.stack/programs/i386-osx/ghc-9.6.4/lib/ghc-9.6.4/lib/x86_64-osx-ghc-9.6.4/libHStransformers-0.6.1.0-ghc9.6.4.dylib:
+  hash: 70c875dac45560ac5154748bc5f8f58f9138a699b76200b4f97bf4e2ea3fcb1b
 /Users/zyu/.stack/programs/i386-osx/ghc-9.6.4/lib/ghc-9.6.4/lib/x86_64-osx-ghc-9.6.4/rts-1.0.2/include/ghcversion.h:
   hash: cbc0ab805e5b827180e3116cecd3f6665988df7f45a6b64f0e09ea8c25c438ff
+? /Users/zyu/.stack/snapshots/i386-osx/e6e4ffe77561dc405d982c20db4b9270dde1ba68171e2cba413bbc5dc8e7c817/9.6.4/lib/x86_64-osx-ghc-9.6.4/libHSQuickCheck-2.14.3-9d4oXdqFIIsAVYlxRaeQNn-ghc9.6.4.dylib
+: hash: ce1219abf72ebd583d1d4d2277bb98ea32abad43a2f6b1496c59a8bdd31ca625
+? /Users/zyu/.stack/snapshots/i386-osx/e6e4ffe77561dc405d982c20db4b9270dde1ba68171e2cba413bbc5dc8e7c817/9.6.4/lib/x86_64-osx-ghc-9.6.4/libHSrandom-1.2.1.2-podvh1cvUb6sd5vymdgyp-ghc9.6.4.dylib
+: hash: 2f8f92fdd7da0b5ff732c2f17fdc0224ae2eda8a51b16cef149ce7f51b927f5b
+? /Users/zyu/.stack/snapshots/i386-osx/e6e4ffe77561dc405d982c20db4b9270dde1ba68171e2cba413bbc5dc8e7c817/9.6.4/lib/x86_64-osx-ghc-9.6.4/libHSsplitmix-0.1.0.5-RLxf3E08Gy8zJgOvF4tRY-ghc9.6.4.dylib
+: hash: a9ccabcc85f82e37e2553c2fd97c7d21dd656654e65bf867683fae310b2cd581
 /Users/zyu/Desktop/Projet/SimCity_Haskell_Jeu/.stack-work/dist/i386-osx/ghc-9.6.4/build/minijeu-test/autogen/Paths_minijeu.hs:
   hash: 4e97901a3bc7e5af45188749edc10548f3315a574081bc22baeed5d1bb06942e
+/Users/zyu/Desktop/Projet/SimCity_Haskell_Jeu/.stack-work/dist/i386-osx/ghc-9.6.4/build/minijeu-test/autogen/cabal_macros.h:
+  hash: 0fe81ed8e6fdbaf92d1764be0dc49ed36e5669ea73a4692cbb3b0ec827a82fec
 /Users/zyu/Desktop/Projet/SimCity_Haskell_Jeu/ChangeLog.md:
   hash: e59d79eec98a648ef6fa74563560ca4fd1d3d93d93e6588d66daa8a3c624be96
 /Users/zyu/Desktop/Projet/SimCity_Haskell_Jeu/README.md:
@@ -13,4 +45,4 @@
 /Users/zyu/Desktop/Projet/SimCity_Haskell_Jeu/test/Spec.hs:
   hash: 5c814e5745b3ce74d849cfa31ed2143d18580ab6b20c56ecbeb1db806c6ec79e
 /Users/zyu/Desktop/Projet/SimCity_Haskell_Jeu/test/TestProperties.hs:
-  hash: e6e38415fcaebb2fdb98f44d2a6501eb8c898e4907acdc0ad37b1dc15a559866
+  hash: eaa6ecdd5155ba1bbf0c3877d1de1e9c860020e4eb6f28183516d1bd069e99a4

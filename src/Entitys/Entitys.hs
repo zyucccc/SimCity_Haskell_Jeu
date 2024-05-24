@@ -45,3 +45,9 @@ newtype CitId =  CitId String
 
 instance Show CitId where
   show (CitId id) = show id
+
+instance Eq CitId where
+  (CitId id1) == (CitId id2) = id1 == id2
+
+instance Ord CitId where
+  compare (CitId id1) (CitId id2) = compare id1 id2

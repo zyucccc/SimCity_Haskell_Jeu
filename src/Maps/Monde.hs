@@ -8,7 +8,12 @@ import Foreign.C.Types (CInt (..) )
 import Control.Monad (forM)
 import System.Random (randomRIO)
 
+-- Monde est une carte de coordonnées à des zones
 type Monde = Map.Map Coord (Maybe Zone)
+
+inv_Coord_Monde :: Monde -> Bool
+inv_Coord_Monde monde = all (\(coord, _) -> case coord of
+                                              C x y -> x >= 0 && y >= 0 && x<= (window_largeur `div` caseSize) && y <= (window_hauteur `div` caseSize)) (Map.toList monde)
 
 -- initMap avec random grass, terre, eau
 initMonde :: CInt -> CInt -> IO Monde
@@ -17,15 +22,15 @@ initMonde pixelWidth pixelHeight = do
                 forM [0..rows-1] $ \y -> do
                     r <- randomRIO (0, 30::CInt)
                     let zone = case r of
-                            0 -> Eau (Rectangle (C x y) caseSize caseSize)     -- 1% 的几率是水
-                            1 -> Grass (Rectangle (C x y) caseSize caseSize)    -- 1% 的几率是草地
-                            _ -> Terre (Rectangle (C x y) caseSize caseSize)    -- 其余是土地
+                            0 -> Eau (Rectangle (C x y) caseSize caseSize)
+                            1 -> Grass (Rectangle (C x y) caseSize caseSize)
+                            _ -> Terre (Rectangle (C x y) caseSize caseSize)
                     return (C x y, Just zone)
     return $ Map.fromList (concat cells)
 
 -- verifier si il y a deja une zone construit sur l'ensemble des cases
-check_DejaBuild_Monde :: ZoneType -> Coord -> Monde -> Bool
-check_DejaBuild_Monde zoneType (C x y) monde =
+pre_DejaBuild_Monde :: ZoneType -> Coord -> Monde -> Bool
+pre_DejaBuild_Monde zoneType (C x y) monde =
   let (C coord_x coord_y) = coordToRowCol (C x y)
       (largeur, hauteur) = case zoneType of
                             ZRType -> (largeur_ZR `div` caseSize, hauteur_ZR `div` caseSize)
@@ -50,8 +55,8 @@ check_DejaBuild_Monde zoneType (C x y) monde =
                       _ -> False) coords
 
 -- verifier si cette case est voisine d'une case cable/centrale
-check_Voisin_Cable :: Coord -> Monde -> Bool
-check_Voisin_Cable coord monde =
+pre_Voisin_Cable :: Coord -> Monde -> Bool
+pre_Voisin_Cable coord monde =
   let (C x y) = coordToRowCol coord
       coords = [C (x + dx) (y + dy) | dx <- [-1..1], dy <- [-1..1], dx /= 0 || dy /= 0]
   in any (\coord -> case Map.lookup coord monde of
@@ -59,20 +64,6 @@ check_Voisin_Cable coord monde =
                       Just (Just (Cable _)) -> True
                       _ -> False) coords
 
--- verifier si il y a deja une zone construit sur une case
-check_DejaBuild_Monde_Case :: Coord -> Monde -> Bool
-check_DejaBuild_Monde_Case coord monde =
-  let coord_case = coordToRowCol coord
-  in  case Map.lookup coord_case monde of
-      Just (Just (Eau _)) -> True
-      Just (Just (ZR _ _)) -> True
-      Just (Just (ZI _ _)) -> True
-      Just (Just (ZC _ _)) -> True
-      Just (Just (Admin _ _)) -> True
-      Just (Just (Route _ _)) -> True
-      Just (Just (Centrale _)) -> True
-      Just (Just (Cable _)) -> True
-      _ -> False
 
 --verifier si le coord correspond à une case de Eau ou d'autre Batiment
 checkCoord_Monde :: Coord -> Monde -> Bool
@@ -111,7 +102,5 @@ checkZone_Electrique zone monde =
                       Just (Just (Cable _)) -> True
                       _ -> False) surroundingCoords
 
--- verifier si cette zone residence ont au moins un cabane
---checkZone_Residence :: Zone -> Bool
---checkZone_Residence zone =
- 
+
+
