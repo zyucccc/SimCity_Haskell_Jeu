@@ -90,21 +90,6 @@ coord_forme (VSegment c _) = c
 coord_forme (Rectangle c _ _) = c
 
 --tous les coords de la forme
---tous_coords_forme :: Forme -> [Coord]
---tous_coords_forme (HSegment (C x'' y'') l) =
---    let x = x'' * caseSize
---        y = y'' * caseSize in
---        [C x' y | x' <- [x .. x + l - 1]]
---tous_coords_forme (VSegment (C x'' y'') l) =
---    let x = x'' * caseSize
---        y = y'' * caseSize in
---        [C x y' | y' <- [y .. y + l - 1]]
---tous_coords_forme (Rectangle (C x'' y'') w h) =
---    let x = x'' * caseSize
---        y = y'' * caseSize in
---        [C x' y' | x' <- [x .. x + w - 1], y' <- [y .. y + h - 1]]
-
---tous les coords de la forme
 tous_coords_forme :: Forme -> [Coord]
 tous_coords_forme (HSegment (C x y) l') = let l = l' `div` caseSize in [C x' y | x' <- [x .. x + l]]
 tous_coords_forme (VSegment (C x y) l') = let l = l' `div` caseSize in [C x y' | y' <- [y .. y + l]]
@@ -116,12 +101,6 @@ tous_coords_forme (Rectangle (C x y) w' h') = let w = w' `div` caseSize
 coordToRowCol :: Coord -> Coord
 coordToRowCol (C x y) = C (x `div` caseSize) (y `div` caseSize)
 
---tous les cases de la forme
---formeCases :: Forme -> [Coord]
---formeCases forme =
---    let pixels = tous_coords_forme forme
---        gridCoords = map coordToRowCol pixels
---    in nub gridCoords -- supprimer les doublons
 --tous les cases de la forme
 formeCases :: Forme -> [Coord]
 formeCases forme = nub (tous_coords_forme forme) -- supprimer les doublons

@@ -46,22 +46,6 @@ data GameState = GameState { mouse_state :: MouseState
 initGameState :: Monde -> GameState
 initGameState monde = GameState (False, Nothing) Nothing monde Nothing initVille (ZoneId 0) initEconomic 0
 
--- 角色左移
---moveLeft :: GameState -> GameState
---moveLeft gs = Debug.Trace.trace "Keyboard: Move left" gs { persoX = persoX gs - speed gs }
---
----- 角色右移
---moveRight :: GameState -> GameState
---moveRight gs = Debug.Trace.trace "Keyboard: Move Right" gs { persoX = persoX gs + speed gs }
---
----- 角色上移
---moveUp :: GameState -> GameState
---moveUp gs = Debug.Trace.trace "Keyboard: Move Up" gs { persoY = persoY gs - speed gs }
---
----- 角色下移
---moveDown :: GameState -> GameState
---moveDown gs = Debug.Trace.trace "Keyboard: Move Down" gs { persoY = persoY gs + speed gs }
-
 -- update gamestate(economic) every 3s en fonction du nombre de zones commerciales
 
 updateEconomic :: GameState -> GameState
@@ -183,11 +167,12 @@ handleMouseClick_BuildZone gs =
                                                          Economic money_actuel = economic gs
                                                          Economic money_afterBuild = Economic (money_actuel - 50)
                                                       in if money_afterBuild - 50 < 0 then gs { displayText = Just "Pas assez d'argent!" }
+                                                         else if not (check_Voisin_Cable coord_pixel notre_monde) then gs { displayText = Just "Pas de centrale ou cable à coté,vous ne peuvez pas construire les cables ici" }
                                                          else gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), economic = Economic money_afterBuild, displayText = Just ("build CableType in " ++ show (ville gs)) }
                                         _ -> gs
                      Nothing -> gs
 
--- 处理选择建筑类型的鼠标点击事件
+-- handle event choisir les type de zones depuis
 handleMouseClick_BatimentType :: GameState -> GameState
 handleMouseClick_BatimentType gs =
   let (pressed, pos) = mouse_state gs
@@ -213,19 +198,6 @@ handleMouseClick_BatimentType gs =
                             then gs { displayText = Just "choose Cable", selectedZone = Just CableType }
                             else gs
                      Nothing -> gs
-
--- 处理鼠标点击触碰事件
---handleMouseClick_touche :: GameState -> GameState
---handleMouseClick_touche gs =
---  let (pressed, pos) = mouse_state gs
---  in case pressed of
---        False -> gs
---        True -> case pos of
---                     Just (P (V2 x y)) ->
---                            if x > px && x < px + 100 && y > py && y < py + 100
---                            then gs { displayText = Just "Touché!" }
---                            else gs
---                     Nothing -> gs
 
 -- Clavier
 -- afficher l'argent actuel

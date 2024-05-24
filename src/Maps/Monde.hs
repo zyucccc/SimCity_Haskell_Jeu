@@ -49,6 +49,16 @@ check_DejaBuild_Monde zoneType (C x y) monde =
                       Just (Just (Cable _)) -> True
                       _ -> False) coords
 
+-- verifier si cette case est voisine d'une case cable/centrale
+check_Voisin_Cable :: Coord -> Monde -> Bool
+check_Voisin_Cable coord monde =
+  let (C x y) = coordToRowCol coord
+      coords = [C (x + dx) (y + dy) | dx <- [-1..1], dy <- [-1..1], dx /= 0 || dy /= 0]
+  in any (\coord -> case Map.lookup coord monde of
+                      Just (Just (Centrale _)) -> True
+                      Just (Just (Cable _)) -> True
+                      _ -> False) coords
+
 -- verifier si il y a deja une zone construit sur une case
 check_DejaBuild_Monde_Case :: Coord -> Monde -> Bool
 check_DejaBuild_Monde_Case coord monde =
