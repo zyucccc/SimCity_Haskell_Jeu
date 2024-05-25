@@ -94,8 +94,8 @@ getZoneByCoord coord monde =
 
 
 -- verifier si la zone est lie avec une cable
-checkZone_Electrique :: Zone -> Monde -> Bool
-checkZone_Electrique zone monde =
+pre_Zone_Electrique :: Zone -> Monde -> Bool
+pre_Zone_Electrique zone monde =
   let zoneCoords = zoneCases zone
       surroundingCoords = concatMap (\(C x y) -> [C (x + dx) (y + dy) | dx <- [-1..1], dy <- [-1..1], dx /= 0 || dy /= 0]) zoneCoords
   in any (\coord -> case Map.lookup coord monde of

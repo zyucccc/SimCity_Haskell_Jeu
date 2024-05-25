@@ -7,3 +7,4 @@ main = hspec $ do
   --TP.testInitMonde
   TP.testUpdateEconomic
   TP.testCountZC
+  TP.testGameStateInvariant

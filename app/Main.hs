@@ -44,13 +44,6 @@ import qualified Debug.Trace as T
 import Model (GameState)
 import qualified Model as M
 
-loadBackground :: Renderer -> FilePath -> TextureMap -> SpriteMap -> IO (TextureMap, SpriteMap)
-loadBackground rdr path tmap smap = do
-  tmap' <- TM.loadTexture rdr path (TextureId "background") tmap
-  let sprite = S.defaultScale $ S.addImage S.createEmptySprite $ S.createImage (TextureId "background") (S.mkArea 0 0 window_largeur window_hauteur)
-  let smap' = SM.addSprite (SpriteId "background") sprite smap
-  return (tmap', smap')
-
 --load citoyen
 loadCitoyen :: Renderer -> FilePath -> TextureMap -> SpriteMap -> IO (TextureMap, SpriteMap)
 loadCitoyen rdr path tmap smap = do
@@ -156,9 +149,7 @@ displayMonde renderer tmap smap monde = do
                 Just (Centrale _) -> SpriteId "centraleElectrique"
                 Just (Cable _) -> SpriteId "cable"
         case SM.fetchSprite spriteId smap of
---            sprite -> S.displaySprite renderer tmap (S.moveTo sprite (fromIntegral (x * caseSize)) (fromIntegral (y * caseSize)))
               sprite -> S.displaySprite renderer tmap (S.moveTo sprite (fromIntegral (zone_x * caseSize)) (fromIntegral (zone_y * caseSize)))
---            sprite -> S.displaySprite renderer tmap (S.moveTo sprite (fromIntegral zone_x) (fromIntegral zone_y))
 
 --tool box en droite
 displayToolbox :: Renderer -> TextureMap -> SpriteMap -> IO ()
@@ -189,9 +180,9 @@ main = do
   window <- createWindow "Minijeu" $ defaultWindow { windowInitialSize = V2 window_largeur window_hauteur }
   renderer <- createRenderer window (-1) defaultRenderer
     -- chargement de l'image du fond
-  (tmap, smap) <- loadBackground renderer "assets/background.bmp" TM.createTextureMap SM.createSpriteMap
+--  (tmap, smap) <- loadBackground renderer "assets/background.bmp" TM.createTextureMap SM.createSpriteMap
     -- chargement de citoyen
-  (tmap', smap') <- loadCitoyen renderer "assets/citoyen.bmp" tmap smap
+  (tmap', smap') <- loadCitoyen renderer "assets/citoyen.bmp" TM.createTextureMap SM.createSpriteMap
     -- chargement du monde
   (tmap'', smap'') <- loadMonde renderer "assets/soil.bmp" "assets/grass.bmp" "assets/water.bmp" tmap' smap'
     -- chargement de la toolbox
@@ -214,14 +205,11 @@ gameLoop frameRate renderer tmap smap kbd mos gameState = do
   -- putStrLn "gameLoop"
   startTime <- time
   events <- pollEvents
+  --handle events de clavier et de souris
   let kbd' = K.handleEvents events kbd
   let mos' = MOS.handleEvents events mos
-  -- case mos' of
-  --   Just (P (V2 x y)) -> Debug.Trace.trace ("Mouse click at:" ++ show x ++ " " ++ show y) (return ())
-  --   Nothing -> return ()
+
   clear renderer
-  --- display background
-  S.displaySprite renderer tmap (SM.fetchSprite (SpriteId "background") smap)
   --- display monde
   displayMonde renderer tmap smap (M.monde gameState)
   --- display toolbox
@@ -237,10 +225,6 @@ gameLoop frameRate renderer tmap smap kbd mos gameState = do
   -- putStrLn $ "Frame rate: " <> (show (1 / deltaTime)) <> " (frame/s)"
   --- update du game state
   let gameState' = M.gameStep gameState{ M.mouse_state = mos' } kbd' mos' deltaTime
-  -- let gameState'' = gameState' { M.mouseClick = Nothing }
-
--- print nb de zone commerciales
-  --putStrLn $ "Number of ZC zones: " ++ show (M.countZC (M.monde gameState'))
   case M.displayText gameState' of
     Just text -> putStrLn text
     Nothing -> return ()

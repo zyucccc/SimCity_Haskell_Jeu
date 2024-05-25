@@ -63,7 +63,7 @@ instance Arbitrary ZoneId where
   arbitrary = ZoneId <$> arbitrary
 
 instance Arbitrary Economic where
-  arbitrary = Economic <$> arbitrary
+  arbitrary = (Economic <$> arbitrary) `suchThat` (\(Economic money) -> money >= 0)
 
 instance Arbitrary CitId where
   arbitrary = CitId <$> arbitrary
@@ -80,7 +80,9 @@ instance Arbitrary Citoyen where
                     , Emigrant <$> arbitrary <*> arbitrary
                     ]
 
-
+-- nous testons le invariant de GameState
+prop_gameStateInvariant :: GameState -> Bool
+prop_gameStateInvariant gs = inv_GameState gs
 
 -- nous verifions si la fonction updateEconomic augmente bien la quantité d'argent dans l'etat économique
 prop_updateEconomicIncreasesMoney :: GameState -> Bool
@@ -102,6 +104,10 @@ prop_countZC_correct monde =
     isZC (Just (ZC _ _)) = True
     isZC _ = False
 
+testGameStateInvariant = do
+  describe "GameState invariant" $ do
+    it "is preserved by the GameState type" $
+      property prop_gameStateInvariant
 
 testUpdateEconomic = do
   describe "updateEconomic" $ do

@@ -28,14 +28,21 @@ data Economic = Economic {
 initEconomic :: Economic
 initEconomic = Economic 8000  -- init economic == 8000
 
-
+                           -- le state de souris
 data GameState = GameState { mouse_state :: MouseState
+                           -- texte à print dans boucle de jeu
                            , displayText :: Maybe String
                            , monde :: Monde
+                           -- chaque fois le joueur clique sur un type de zone
+                           -- dans le toolbox,on stocke le type de zone qu'il a choisi
                            , selectedZone :: Maybe ZoneType
                            , ville :: Ville
+                           -- pour générer les ids uniques des zones
                            , nextZoneId :: ZoneId
                            , economic :: Economic
+                           -- on stocke le moment pour
+                           --dans la boucle de jeu, nous puissions vérifier toutes
+                           -- les trois secondes et exécuter la méthode correspondante pour augmenter l'économie
                            , economicUpdateTime :: Float
                            }
                            deriving (Show)
@@ -43,6 +50,7 @@ data GameState = GameState { mouse_state :: MouseState
 inv_GameState :: GameState -> Bool
 inv_GameState gs = inv_economic_gameState gs
 
+-- le economic de joueur est strictement positif
 inv_economic_gameState :: GameState -> Bool
 inv_economic_gameState gs = let Economic val = (economic gs) in val >= 0
 
@@ -116,14 +124,18 @@ handleMouseClick_BuildZone gs =
                         else
                             let coord_pixel = C (fromIntegral x) (fromIntegral y)
                                 coord_case = coordToRowCol coord_pixel
+                                -- pour generer les ids uniques des zones
                                 ZoneId id = nextZoneId gs
                                 in case selectedZone gs of
                                         Just ZRType -> case pre_DejaBuild_Monde ZRType coord_pixel notre_monde of
                                             True -> gs
                                             False -> let new_zone = createZone_ZR coord_case
+                                            -- reduire l'economic si le joueur construit une zone
                                                          Economic money_actuel = economic gs
                                                          Economic money_afterBuild = Economic (money_actuel - 300)
+                                                         -- si il n'a pas assez d'argent, on ne construit pas la zone
                                                      in if money_afterBuild  < 0 then gs { displayText = Just "Pas assez d'argent!" }
+                                                     -- construire la zone,mise a jour de monde et ville
                                                         else gs {monde = placeZone new_zone notre_monde, ville = addZone_Ville (ZoneId id) new_zone (ville gs), nextZoneId = ZoneId (id + 1), economic = Economic money_afterBuild, displayText = Just ("build ZRType in " ++ show (ville gs)) }
                                         Just ZIType -> case pre_DejaBuild_Monde ZIType coord_pixel notre_monde of
                                             True -> gs
@@ -185,6 +197,7 @@ handleMouseClick_BatimentType gs =
   in case pressed of
         False -> gs
         True -> case pos of
+          -- selon les position où le joueur clique, on change le type de zone qu'il a choisi
                      Just (P (V2 x y)) ->
                             if x > fromIntegral position_ZRBouton_x && x < fromIntegral (position_ZRBouton_x + largeur_Bouton) && y > fromIntegral position_ZRBouton_y && y < fromIntegral (position_ZRBouton_y + hauteur_Bouton)
                             then gs { displayText = Just "choose ZRType", selectedZone = Just ZRType }
@@ -226,7 +239,7 @@ handleClavierB gs =
          case getZoneByCoord coord (monde gs) of
            Nothing -> gs
            -- faut que la zone est lié au electricité avec cable pour build des batiments
-           Just zone -> if checkZone_Electrique zone (monde gs) then
+           Just zone -> if pre_Zone_Electrique zone (monde gs) then
                           let
                              ZoneId id = getZoneIdByZone zone (ville gs)
                              zone_Coord = zoneCoord zone

@@ -3,12 +3,9 @@ module Config.Config where
 import Foreign.C.Types (CInt (..) )
 
 -- constant global
---640
---960
 window_largeur :: CInt
 window_largeur = 1920
 
---480
 window_hauteur :: CInt
 window_hauteur = 1080
 
