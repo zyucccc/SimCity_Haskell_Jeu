@@ -7,12 +7,12 @@ import Test.Hspec
 import Test.QuickCheck
 import Maps.Zones
 import Maps.Monde
+import Config.Config
+import  Maps.Formes
 import Model
 import Foreign.C.Types (CInt)
 import qualified Data.Map as Map
-import Config.Config (caseSize)
 import SDL (V2(..), Point(..))
-import Maps.Formes (Coord(..), Forme(..))
 import Entitys.Entitys (Batiment(..), CitId(..), Citoyen(..), Occupation(..), BatId(..))
 import Entitys.Ville (Ville(..))
 import GHC.Int (Int32)
@@ -29,10 +29,11 @@ instance Arbitrary GameState where
     economicUpdateTime <- arbitrary
     return $ GameState mouseState displayText monde selectedZone ville nextZoneId economic economicUpdateTime
 
+--les coords generes doivent etre dans la carte
 instance Arbitrary Coord where
   arbitrary = do
-    x <- arbitrary
-    y <- arbitrary
+    x <- choose (0, window_largeur)
+    y <- choose (0, window_hauteur)
     return $ C x y
 
 instance Arbitrary (Point V2 Int32) where
@@ -42,7 +43,10 @@ instance Arbitrary (Point V2 Int32) where
     return $ P (V2 x y)
 
 instance Arbitrary Forme where
-  arbitrary = oneof [Rectangle <$> arbitrary <*> arbitrary <*> arbitrary, VSegment <$> arbitrary <*> arbitrary, HSegment <$> arbitrary <*> arbitrary]
+  arbitrary = oneof [ Rectangle <$> arbitrary <*> (choose (0, window_hauteur)) <*> (choose (0, window_hauteur))
+                    , VSegment <$> arbitrary <*> (choose (0, window_hauteur))
+                    , HSegment <$> arbitrary <*> (choose (0, window_hauteur))
+                    ]
 
 instance Arbitrary Batiment where
   arbitrary = oneof [Cabane <$> arbitrary <*> arbitrary <*> arbitrary, Atelier <$> arbitrary <*> arbitrary <*> arbitrary, Epicerie <$> arbitrary <*> arbitrary <*> arbitrary, Commissariat <$> arbitrary]
@@ -104,6 +108,18 @@ prop_countZC_correct monde =
     isZC (Just (ZC _ _)) = True
     isZC _ = False
 
+
+-- nous testons la fonction placeZone
+prop_placeZone :: Zone -> Bool
+prop_placeZone zone =
+  let newMonde = placeZone zone (initMondePure window_largeur window_hauteur)
+      coord = zoneCoord zone
+  in
+    case Map.lookup (coordToRowCol coord) newMonde of
+      Just _ -> True
+      _ -> False
+
+
 testGameStateInvariant = do
   describe "GameState invariant" $ do
     it "is preserved by the GameState type" $
@@ -118,6 +134,11 @@ testCountZC = do
   describe "countZC" $ do
     it "counts the correct number of commercial zones" $
       property prop_countZC_correct
+
+testPlaceZone = do
+  describe "placeZone" $ do
+    it "places a zone in the map" $
+      property prop_placeZone
 
 return []
 

@@ -100,23 +100,49 @@ zoneCoord zone = coord_forme $ zoneForme zone
 createZone_ZR :: Coord -> Zone
 createZone_ZR (C x y) = ZR (Rectangle (C x y) largeur_ZR hauteur_ZR) []
 
+--post condition : on a bien créé une zone ZR
+post_createZone_ZR :: Coord -> Zone -> Bool
+post_createZone_ZR (C x y) zone_apres = zone_apres == ZR (Rectangle (C x y) largeur_ZR hauteur_ZR) []
+
 createZone_ZI :: Coord -> Zone
 createZone_ZI (C x y) = ZI (Rectangle (C x y) largeur_ZI hauteur_ZI) []
+
+--post condition : on a bien créé une zone ZI
+post_createZone_ZI :: Coord -> Zone -> Bool
+post_createZone_ZI (C x y) zone_apres = zone_apres == ZI (Rectangle (C x y) largeur_ZI hauteur_ZI) []
 
 createZone_ZC :: Coord -> Zone
 createZone_ZC (C x y) = ZC (Rectangle (C x y) largeur_ZC hauteur_ZC) []
 
+--post condition : on a bien créé une zone ZC
+post_createZone_ZC :: Coord -> Zone -> Bool
+post_createZone_ZC (C x y) zone_apres = zone_apres == ZC (Rectangle (C x y) largeur_ZC hauteur_ZC) []
+
 createZone_Admin :: Coord -> Batiment -> Zone
 createZone_Admin (C x y) bat = Admin (Rectangle (C x y) largeur_Admin hauteur_Admin) bat
+
+--post condition : on a bien créé une zone Admin
+post_createZone_Admin :: Coord -> Batiment -> Zone -> Bool
+post_createZone_Admin (C x y) bat zone_apres = zone_apres == Admin (Rectangle (C x y) largeur_Admin hauteur_Admin) bat
 
 createZone_Route :: Coord -> Direction_Route -> Zone
 createZone_Route (C x y) dir = Route (Rectangle (C x y) (largeur_route `div` 2) (hauteur_route `div` 2)) dir
 
+--post condition : on a bien créé une zone Route
+post_createZone_Route :: Coord -> Direction_Route -> Zone -> Bool
+post_createZone_Route (C x y) dir zone_apres = zone_apres == Route (Rectangle (C x y) (largeur_route `div` 2) (hauteur_route `div` 2)) dir
+
 createZone_Centrale :: Coord -> Zone
 createZone_Centrale (C x y) = Centrale (Rectangle (C x y) (largeur_Centrale) (hauteur_Centrale))
+
+--post condition : on a bien créé une zone Centrale
+post_createZone_Centrale :: Coord -> Zone -> Bool
+post_createZone_Centrale (C x y) zone_apres = zone_apres == Centrale (Rectangle (C x y) (largeur_Centrale) (hauteur_Centrale))
 
 createZone_Cable :: Coord -> Zone
 createZone_Cable (C x y) = Cable (Rectangle (C x y) (largeur_cable `div` 2) (hauteur_cable `div` 2))
 
-
+--post condition : on a bien créé une zone Cable
+post_createZone_Cable :: Coord -> Zone -> Bool
+post_createZone_Cable (C x y) zone_apres = zone_apres == Cable (Rectangle (C x y) (largeur_cable `div` 2) (hauteur_cable `div` 2))
 

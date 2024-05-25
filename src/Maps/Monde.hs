@@ -28,10 +28,18 @@ initMonde pixelWidth pixelHeight = do
                     return (C x y, Just zone)
     return $ Map.fromList (concat cells)
 
+-- initMap pure
+initMondePure :: CInt -> CInt -> Monde
+initMondePure pixelWidth pixelHeight =
+  let cells = [ ((C x y), Just (Terre (Rectangle (C x y) caseSize caseSize))) | x <- [0..cols-1], y <- [0..rows-1] ]
+  in Map.fromList cells
+
 -- verifier si il y a deja une zone construit sur l'ensemble des cases
 pre_DejaBuild_Monde :: ZoneType -> Coord -> Monde -> Bool
 pre_DejaBuild_Monde zoneType (C x y) monde =
   let (C coord_x coord_y) = coordToRowCol (C x y)
+  --on calcul le largeur, hauteur de la zone correspondant,(nombre de cases)
+  --on parcourt les cases de la zone, si une case est deja construite, on renvoie True
       (largeur, hauteur) = case zoneType of
                             ZRType -> (largeur_ZR `div` caseSize, hauteur_ZR `div` caseSize)
                             ZIType -> (largeur_ZI `div` caseSize, hauteur_ZI `div` caseSize)
@@ -83,6 +91,10 @@ checkCoord_Monde coord_pixel monde =
 -- placer une forme sur la map
 placeZone :: Zone -> Monde -> Monde
 placeZone zone monde = Map.union (Map.fromList $ zip (zoneCases zone) (repeat (Just zone))) monde
+
+-- post condition : la zone est bien placée
+post_placeZone :: Zone -> Monde -> Monde -> Bool
+post_placeZone zone monde monde_apres = Map.lookup (zoneCoord zone) monde_apres == Just (Just zone)
 
 -- obtenir la zone by coord
 getZoneByCoord :: Coord -> Monde -> Maybe Zone

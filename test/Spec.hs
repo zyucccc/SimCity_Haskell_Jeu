@@ -8,3 +8,4 @@ main = hspec $ do
   TP.testUpdateEconomic
   TP.testCountZC
   TP.testGameStateInvariant
+  TP.testPlaceZone
