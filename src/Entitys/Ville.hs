@@ -16,6 +16,7 @@ instance Show Ville where
 initVille :: Ville
 initVille = Ville M.empty M.empty
 
+--mise à jour de la ville
 addZone_Ville :: ZoneId -> Zone -> Ville -> Ville
 addZone_Ville zid z (Ville zones cit) = Ville (M.insert zid z zones) cit
 

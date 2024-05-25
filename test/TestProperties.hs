@@ -14,7 +14,7 @@ import Foreign.C.Types (CInt)
 import qualified Data.Map as Map
 import SDL (V2(..), Point(..))
 import Entitys.Entitys (Batiment(..), CitId(..), Citoyen(..), Occupation(..), BatId(..))
-import Entitys.Ville (Ville(..))
+import Entitys.Ville
 import GHC.Int (Int32)
 
 instance Arbitrary GameState where
@@ -42,6 +42,7 @@ instance Arbitrary (Point V2 Int32) where
     y <- arbitrary
     return $ P (V2 x y)
 
+-- les coord,taille de forme generes doivent etre dans la carte
 instance Arbitrary Forme where
   arbitrary = oneof [ Rectangle <$> arbitrary <*> (choose (0, window_hauteur)) <*> (choose (0, window_hauteur))
                     , VSegment <$> arbitrary <*> (choose (0, window_hauteur))
@@ -90,6 +91,7 @@ prop_gameStateInvariant gs = inv_GameState gs
 
 -- nous verifions si la fonction updateEconomic augmente bien la quantité d'argent dans l'etat économique
 prop_updateEconomicIncreasesMoney :: GameState -> Bool
+--on verifie si la quantité d'argent augmente bien
 prop_updateEconomicIncreasesMoney gs =
   let initialMoney = money $ economic gs
       updatedGs = updateEconomic gs
@@ -115,10 +117,40 @@ prop_placeZone zone =
   let newMonde = placeZone zone (initMondePure window_largeur window_hauteur)
       coord = zoneCoord zone
   in
+    -- on verifie si la zone est bien placée
     case Map.lookup (coordToRowCol coord) newMonde of
       Just _ -> True
       _ -> False
 
+-- test pour addZone_Ville
+prop_addZone_Ville :: ZoneId -> Zone -> Ville -> Bool
+prop_addZone_Ville zid z ville =
+  let newVille = addZone_Ville zid z ville
+  -- on verifie si la zone est bien ajoutée
+  in case Map.lookup zid (viZones newVille) of
+    Just _ -> True
+    Nothing -> False
+
+-- test buildBatiment
+prop_buildBatiment :: Zone -> Batiment -> Bool
+prop_buildBatiment zone bat
+-- si c'est une zone de ZR, ZI, ZC, on verifie si le batiment est bien construit
+  | isZR zone || isZC zone || isZI zone =
+    let newZone = buildBatiment zone bat
+    in case newZone of
+      ZR _ (b:_) -> b == bat
+      ZI _ (b:_) -> b == bat
+      ZC _ (b:_) -> b == bat
+      _ -> False
+      -- si quickcheck genere d'autre type de zone, on renvoie true directement
+  | otherwise = True
+  where
+    isZR (ZR _ _) = True
+    isZR _ = False
+    isZC (ZC _ _) = True
+    isZC _ = False
+    isZI (ZI _ _) = True
+    isZI _ = False
 
 testGameStateInvariant = do
   describe "GameState invariant" $ do
@@ -139,6 +171,16 @@ testPlaceZone = do
   describe "placeZone" $ do
     it "places a zone in the map" $
       property prop_placeZone
+
+testAddZone_Ville = do
+  describe "addZone_Ville" $ do
+    it "add a zone to the ville" $
+      property prop_addZone_Ville
+
+testBuildBatiment = do
+  describe "buildBatiment" $ do
+    it "builds a batiment in a zone" $
+      property prop_buildBatiment
 
 return []
 

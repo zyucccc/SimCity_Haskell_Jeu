@@ -9,3 +9,5 @@ main = hspec $ do
   TP.testCountZC
   TP.testGameStateInvariant
   TP.testPlaceZone
+  TP.testAddZone_Ville
+  TP.testBuildBatiment

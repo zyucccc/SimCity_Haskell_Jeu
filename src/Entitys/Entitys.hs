@@ -17,6 +17,19 @@ data Batiment
 -- les epicerie dans les zones commerciales
 -- les commissariats dans les zones administratives
 
+instance Show Batiment where
+  show (Cabane c l _) = "Cabane(" ++ show c ++ ", length " ++ show l ++ ")"
+  show (Atelier c l _) = "Atelier(" ++ show c ++ ", length " ++ show l ++ ")"
+  show (Epicerie c l _) = "Epicerie(" ++ show c ++ ", length " ++ show l ++ ")"
+  show (Commissariat c) = "Commissariat(" ++ show c ++ ")"
+
+instance Eq Batiment where
+  (Cabane c l _) == (Cabane c' l' _) = c == c' && l == l'
+  (Atelier c l _) == (Atelier c' l' _) = c == c' && l == l'
+  (Epicerie c l _) == (Epicerie c' l' _) = c == c' && l == l'
+  (Commissariat c) == (Commissariat c') = c == c'
+  _ == _ = False
+
 newtype BatId =  BatId Int deriving (Eq, Ord)
 
 instance Show BatId where
